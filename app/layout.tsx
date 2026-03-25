@@ -1,13 +1,25 @@
 import "./globals.css";
 import TopHeader from "@/components/Navbar/TopHeader";
-import MainNavbar from "@/components/Navbar/MainNavbar";
+import Navbar from "@/components/Navbar/Navbar";
+import { Poppins } from "next/font/google";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+// ✅ FONT
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-poppins",
+});
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      <body>
+      <body className={`${poppins.className} bg-gray-50`}>
         <TopHeader />
-        <MainNavbar />
+        <Navbar /> {/* ✅ data prop removed (server fetch inside Navbar) */}
         {children}
       </body>
     </html>
