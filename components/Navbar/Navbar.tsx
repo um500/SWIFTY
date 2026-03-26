@@ -7,36 +7,42 @@ import {
 } from "@/lib/queries";
 
 export default async function Navbar() {
-
   const data = await client.fetch(MENU_QUERY);
   const customCategories = await client.fetch(CUSTOMIZED_WITH_TOURS_QUERY);
   const specialTours = await client.fetch(SPECIAL_TOURS_QUERY);
 
-  const india = data.countries.find(
+  const india = data?.countries?.find(
     (c: any) => c.name.toLowerCase() === "india"
   );
 
-  const indiaStates = data.states.filter(
-    (s: any) => s.country?._id === india?._id
-  );
+  const indiaStates =
+    data?.states?.filter(
+      (s: any) => s.country?._id === india?._id
+    ) || [];
 
-  const worldCountries = data.countries.filter(
-    (c: any) => c.name.toLowerCase() !== "india"
-  );
+  const worldCountries =
+    data?.countries?.filter(
+      (c: any) => c.name.toLowerCase() !== "india"
+    ) || [];
 
-  // ✅ IMPORTANT: pre-map data
+  // ✅ states map
   const statesByCountry: Record<string, any[]> = {};
-  data.states.forEach((state: any) => {
+  data?.states?.forEach((state: any) => {
     const countryId = state.country?._id;
+    if (!countryId) return;
+
     if (!statesByCountry[countryId]) {
       statesByCountry[countryId] = [];
     }
     statesByCountry[countryId].push(state);
   });
 
+  // ✅ tours map
   const toursByState: Record<string, any[]> = {};
-  data.tours.forEach((tour: any) => {
+  data?.tours?.forEach((tour: any) => {
     const stateId = tour.state?._id;
+    if (!stateId) return;
+
     if (!toursByState[stateId]) {
       toursByState[stateId] = [];
     }
@@ -47,8 +53,8 @@ export default async function Navbar() {
     <NavbarUI
       indiaStates={indiaStates}
       worldCountries={worldCountries}
-      statesByCountry={statesByCountry}   // ✅ data instead of function
-      toursByState={toursByState}         // ✅ data instead of function
+      statesByCountry={statesByCountry}
+      toursByState={toursByState}
       customCategories={customCategories}
       specialTours={specialTours}
     />
