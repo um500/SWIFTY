@@ -8,45 +8,53 @@ import {
 
 export default async function Navbar() {
   const data = await client.fetch(MENU_QUERY);
+
   const customCategories = await client.fetch(CUSTOMIZED_WITH_TOURS_QUERY);
   const specialTours = await client.fetch(SPECIAL_TOURS_QUERY);
 
+  // ✅ INDIA FIND
   const india = data?.countries?.find(
     (c: any) => c.name.toLowerCase() === "india"
   );
 
+  // ✅ INDIA STATES (FIXED 🔥)
   const indiaStates =
     data?.states?.filter(
-      (s: any) => s.country?._id === india?._id
+      (s: any) => s.country === india?._id
     ) || [];
 
+  // ✅ WORLD COUNTRIES
   const worldCountries =
     data?.countries?.filter(
       (c: any) => c.name.toLowerCase() !== "india"
     ) || [];
 
-  // ✅ states map
+  // ✅ STATES BY COUNTRY (FIXED 🔥)
   const statesByCountry: Record<string, any[]> = {};
   data?.states?.forEach((state: any) => {
-    const countryId = state.country?._id;
+    const countryId = state.country; // ✅ direct id
+
     if (!countryId) return;
 
     if (!statesByCountry[countryId]) {
       statesByCountry[countryId] = [];
     }
+
     statesByCountry[countryId].push(state);
   });
 
-  // ✅ tours map
-  const toursByState: Record<string, any[]> = {};
-  data?.tours?.forEach((tour: any) => {
-    const stateId = tour.state?._id;
+  // ✅ 🔥 AREAS BY STATE (NEW ADD - MOST IMPORTANT)
+  const areasByState: Record<string, any[]> = {};
+  data?.areas?.forEach((area: any) => {
+    const stateId = area.state; // ✅ direct id
+
     if (!stateId) return;
 
-    if (!toursByState[stateId]) {
-      toursByState[stateId] = [];
+    if (!areasByState[stateId]) {
+      areasByState[stateId] = [];
     }
-    toursByState[stateId].push(tour);
+
+    areasByState[stateId].push(area);
   });
 
   return (
@@ -54,7 +62,7 @@ export default async function Navbar() {
       indiaStates={indiaStates}
       worldCountries={worldCountries}
       statesByCountry={statesByCountry}
-      toursByState={toursByState}
+      areasByState={areasByState} // ✅ MUST PASS
       customCategories={customCategories}
       specialTours={specialTours}
     />

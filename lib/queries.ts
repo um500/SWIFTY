@@ -1,31 +1,22 @@
 // ================= MENU QUERY =================
 export const MENU_QUERY = `
 {
-  "countries": *[_type == "country"] | order(name asc){
-    _id,
-    name
-  },
+  "countries": *[_type == "country"]{_id, name},
 
-  "states": *[_type == "state"] | order(name asc){
+  "states": *[_type == "state"]{
     _id,
     name,
-    "country": country->{
-      _id,
-      name
-    }
+    "country": country->_id
   },
 
-  "tours": *[_type == "tour"] | order(title asc){
+  "areas": *[_type == "area"]{
     _id,
-    title,
-    "state": state->{
-      _id,
-      name
-    }
+    name,
+    "slug": slug.current,
+    "state": state->_id
   }
 }
 `;
-
 
 // ================= SPECIAL TOURS QUERY =================
 export const SPECIAL_TOURS_QUERY = `

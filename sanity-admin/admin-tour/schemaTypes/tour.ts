@@ -35,6 +35,13 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
 
+    defineField({
+  name: "area",
+  title: "Select Area",
+  type: "reference",
+  to: [{ type: "area" }],
+}),
+
     // ================= SPECIAL CATEGORY =================
     defineField({
       name: "categories",

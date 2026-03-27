@@ -1,7 +1,15 @@
 import { country } from "./country";
 import { state } from "./state";
-import category from "./category";
+import { area } from "./area"; // ✅ FIXED
 import tour from "./tour";
+import category from "./category";
 import customizedCategory from "./customizedCategory";
 
-export const schemaTypes = [country, state, tour, category, customizedCategory];
+export const schemaTypes = [
+  country,
+  state,
+  area, // ✅ area add karo yaha
+  tour,
+  category,
+  customizedCategory,
+];
