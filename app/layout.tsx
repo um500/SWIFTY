@@ -1,5 +1,4 @@
 import "./globals.css";
-import TopHeader from "@/components/Navbar/TopHeader";
 import Navbar from "@/components/Navbar/Navbar";
 import { Poppins } from "next/font/google";
 
@@ -18,7 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.className} bg-gray-50`}>
-        <TopHeader />
+        
         <Navbar /> {/* ✅ data prop removed (server fetch inside Navbar) */}
         {children}
       </body>
