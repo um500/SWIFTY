@@ -1,14 +1,31 @@
-import { client } from "@/lib/sanity";
-import { MENU_QUERY } from "@/lib/queries";
+import HeroBanner from "@/components/Home/HeroBanner";
+import StudentBanner from "@/components/Home/StudentBanner";
+import DestinationScroller from "@/components/Home/DestinationScroller";
+import FeaturedTour from "@/components/Home/FeaturedTour";
+import TravellingNow from "@/components/Home/TravellingNow";
+import FeatureCards from "@/components/Home/FeatureCards";
+import KashmirPromo from "@/components/Home/KashmirPromo";
+import ContinuePlan from "@/components/Home/ContinuePlan";
+import EuropePromo from "@/components/Home/EuropePromo";
+import PopularTours from "@/components/Home/PopularTours";
+import WhyChooseUs from "@/components/Home/WhyChooseUs";
 
-export default async function Home() {
-  const data = await client.fetch(MENU_QUERY);
-
+const Index = () => {
   return (
-    <div className="p-10">
-      <h1 className="text-3xl font-bold mb-5">Travel Website 🌍</h1>
-
-      
+    <div className="min-h-screen bg-background">
+      <HeroBanner />
+      <StudentBanner />
+      <DestinationScroller />
+      <FeaturedTour />
+      <TravellingNow />
+      <FeatureCards />
+      <KashmirPromo />
+      <ContinuePlan />
+      <EuropePromo />
+      <PopularTours />
+      <WhyChooseUs />
     </div>
   );
-}
+};
+
+export default Index;

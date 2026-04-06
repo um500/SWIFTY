@@ -1,5 +1,6 @@
 import "./globals.css";
 import Navbar from "@/components/Navbar/Navbar";
+import Footer from "@/components/Home/Footer";
 import { Poppins } from "next/font/google";
 
 // ✅ FONT
@@ -20,6 +21,8 @@ export default function RootLayout({
         
         <Navbar /> {/* ✅ data prop removed (server fetch inside Navbar) */}
         {children}
+
+        <Footer />
       </body>
     </html>
   );

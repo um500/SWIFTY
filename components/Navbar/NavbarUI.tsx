@@ -30,7 +30,7 @@ export default function NavbarUI({
   };
 
   return (
-    <div className="bg-[#0b1d2a] text-white">
+    <div className="bg-[#0b1d2a] text-white font-serif">
 
       {/* ================= HEADER ================= */}
       <div className="max-w-7xl mx-auto flex items-center justify-between py-3 px-4">
