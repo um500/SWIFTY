@@ -30,7 +30,7 @@ export default function NavbarUI({
   };
 
   return (
-    <div className="bg-[#0b1d2a] text-white font-serif">
+    <div className="bg-gradient-to-r from-[#0f172a] to-[#1e293b] text-white font-serif">
 
       {/* ================= HEADER ================= */}
       <div className="max-w-7xl mx-auto flex items-center justify-between py-3 px-4">
@@ -81,8 +81,11 @@ export default function NavbarUI({
         </div>
       </div>
 
+      {/* 👇 YE LINE ADD KARO */}
+      <div className="border-t border-white/10"></div>
+
       {/* ================= NAVBAR DESKTOP ================= */}
-      <div className="hidden xl:flex items-center justify-center flex-nowrap gap-8 px-6 py-3 bg-blue-900 font-medium relative whitespace-nowrap">
+      <div className="hidden xl:flex items-center justify-center flex-nowrap gap-8 px-6 py-1 bg-gradient-to-r from-[#0f172a] to-[#1e293b] font-medium relative whitespace-nowrap">
 
         {/* ================= INDIA ================= */}
         <div
@@ -460,7 +463,7 @@ export default function NavbarUI({
                 Contact Us
               </Link>
 
-              
+
 
             </div>
 

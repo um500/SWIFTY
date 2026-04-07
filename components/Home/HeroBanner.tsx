@@ -5,19 +5,8 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { priceCategories } from "@/components/data/tours";
 
-// ✅ Types define karo
-type Tour = {
-  slug: string;
-  name: string;
-};
-
-type PriceCategory = {
-  amount: string;
-  tours: Tour[];
-};
-
 const HeroBanner = () => {
-  const [activePriceTab, setActivePriceTab] = useState<number>(0);
+  const [activePriceTab, setActivePriceTab] = useState(0);
 
   return (
     <section className="relative">
@@ -34,49 +23,53 @@ const HeroBanner = () => {
 
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-3xl md:text-5xl font-display font-extrabold text-white">
+            <h1 className="text-3xl md:text-5xl font-extrabold text-white">
               All-inclusive tours with airfare
             </h1>
-            <p className="text-white/90 mt-2 text-lg font-display">
+            <p className="text-white/90 mt-2 text-lg">
               Go India · Go Foreign
             </p>
           </div>
         </div>
       </div>
 
-      {/* Price Tabs Section */}
+      {/* Price Tabs */}
       <div className="max-w-[1200px] mx-auto -mt-16 relative z-10 px-4">
-        <div className="bg-vw-dark rounded-xl overflow-hidden shadow-xl">
+        <div className="rounded-xl overflow-hidden shadow-xl">
 
-          {/* Tabs */}
-          <div className="flex overflow-x-auto">
-            {(priceCategories as PriceCategory[]).map((cat, i) => (
+          {/* Tabs (Dark Background like 2nd image) */}
+          <div className="flex overflow-x-auto bg-[#1e293b] text-white">
+
+            {priceCategories.map((cat, i) => (
               <button
                 key={i}
                 onClick={() => setActivePriceTab(i)}
-                className={`vw-price-tab ${
-                  activePriceTab === i ? "active" : ""
+                className={`min-w-[90px] md:flex-1 text-center py-4 cursor-pointer transition-all border-r border-gray-600 last:border-r-0 ${
+                  activePriceTab === i
+                    ? "bg-[#334155]"
+                    : "hover:bg-[#273449]"
                 }`}
               >
-                <div className="vw-price-tab-amount">
+                <div className="text-lg md:text-2xl font-bold text-yellow-400">
                   {cat.amount}
                 </div>
               </button>
             ))}
+
           </div>
 
-          {/* Tours List */}
-          <div className="px-6 py-4 bg-white rounded-b-xl">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
+          {/* Tours Section */}
+          <div className="px-6 py-4 bg-white">
+            <div className="flex flex-wrap justify-between gap-y-2 text-sm">
 
-              {(priceCategories as PriceCategory[])[activePriceTab].tours.map((tour) => (
+              {priceCategories[activePriceTab]?.tours.map((tour: any) => (
                 <Link
                   key={tour.slug}
                   href={`/tour/${tour.slug}`}
-                  className="flex items-center gap-1 text-sm text-vw-text hover:text-vw-orange transition-colors py-1.5"
+                  className="flex items-center gap-1 text-gray-700 hover:text-orange-500 transition-colors"
                 >
                   {tour.name}
-                  <ChevronRight className="w-3 h-3 flex-shrink-0" />
+                  <ChevronRight className="w-3 h-3" />
                 </Link>
               ))}
 

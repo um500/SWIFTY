@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-import TourCard from "@/components/card/TourCard";
+import TourCard from "@/components/card/TourCard"
 import { tours } from "@/components/data/tours"
 
 const PopularTours = () => (
@@ -22,7 +22,7 @@ const PopularTours = () => (
         </Link>
       </div>
 
-      {/* Tours Grid */}
+      {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
         {tours.slice(0, 8).map((tour) => (
           <TourCard key={tour.slug} tour={tour} />
