@@ -1,30 +1,22 @@
 import Link from "next/link";
 
-const btnOutline =
-  "border border-vw-dark text-vw-dark font-medium px-6 py-2.5 rounded-lg hover:bg-vw-dark hover:text-white transition-all duration-200 text-sm inline-flex items-center justify-center";
+const StudentBanner = () => {
+  return (
+    <div className="w-full flex flex-col items-center justify-center py-6 bg-vw-light-bg border-b border-vw-border">
 
-const StudentBanner = () => (
-  <div className="text-center py-4 bg-vw-light-bg border-b border-vw-border mt-4">
-    
-    <p className="text-sm text-vw-text">
-      Exams are over! Enjoy our Student Benefit with{" "}
-      <span className="font-semibold text-vw-orange">
-        5% off (World)
-      </span>{" "}
-      -{" "}
-      <span className="font-semibold text-vw-orange">
-        10% off (India)
-      </span>
-    </p>
+      <p className="text-sm text-vw-text text-center">
+        Discover handpicked travel experiences across India and the world — plan your perfect journey today.
+      </p>
 
-    <Link
-      href="/india/all"
-      className={`${btnOutline} mt-3 text-xs py-2 px-6`}
-    >
-      View all Tours
-    </Link>
+      <Link
+        href="/india/all"
+        className="mt-4 inline-flex items-center justify-center px-7 py-2.5 text-sm font-medium rounded-lg border border-[#1e3a8a] text-[#1e3a8a] bg-white transition-all duration-200 hover:bg-[#1e3a8a] hover:text-white hover:shadow-md"
+      >
+        View all Tours →
+      </Link>
 
-  </div>
-);
+    </div>
+  );
+};
 
 export default StudentBanner;
