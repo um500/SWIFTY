@@ -3,6 +3,7 @@ import {
   MENU_QUERY,
   CUSTOMIZED_WITH_TOURS_QUERY,
   SINGLE_CUSTOMIZED_QUERY,
+  homeBannerQuery,
 } from "./queries";
 
 export const client = createClient({
@@ -26,3 +27,7 @@ export async function getCustomizedCategories() {
 export async function getSingleCategory(slug: string) {
   return await client.fetch(SINGLE_CUSTOMIZED_QUERY, { slug });
 }
+
+export const getHomeBanner = async () => {
+  return await client.fetch(homeBannerQuery);
+};

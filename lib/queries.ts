@@ -68,3 +68,52 @@ export const SINGLE_CUSTOMIZED_QUERY = `
   }
 }
 `;
+
+
+export const homeBannerQuery = `
+  *[_type == "homeBanner" && defined(tour)][0..2]{
+    tour->{
+      title,
+      price,
+      days,
+      "slug": slug.current
+    }
+  }
+`;
+
+
+export const destinationQuery = `*[_type == "state"]{
+  name,
+  "slug": slug.current,
+  "image": image.asset->url,
+  country->{
+    name,
+    "slug": slug.current
+  },
+  "tours": count(*[_type == "tour" && references(^._id)])
+}`;
+
+
+
+export const homeSelectedToursQuery = `*[_type == "homeSection"][0]{
+  title,
+  tours[]->{
+    "slug": slug.current,
+    title,
+    days,
+    price,
+    "image": images[0].asset->url
+  }
+}`;
+
+
+export const featuredBannersQuery = `
+*[_type == "featuredBanner"] | order(order asc) {
+  title,
+  subtitle,
+  price,
+  features,
+  "image": image.asset->url,
+  "slug": tour->slug.current
+}
+`;

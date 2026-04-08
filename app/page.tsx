@@ -16,13 +16,13 @@ const Index = () => {
       <HeroBanner />
       <StudentBanner />
       <DestinationScroller />
+      <ContinuePlan />
       <FeaturedTour />
       <TravellingNow />
       <FeatureCards />
       <KashmirPromo />
-      <ContinuePlan />
-      <EuropePromo />
       <PopularTours />
+      <EuropePromo />
       <WhyChooseUs />
     </div>
   );

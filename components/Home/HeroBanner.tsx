@@ -1,12 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-import { priceCategories } from "@/components/data/tours";
+import { getHomeBanner } from "@/lib/sanity";
 
 const HeroBanner = () => {
-  const [activePriceTab, setActivePriceTab] = useState(0);
+  const [data, setData] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState(0);
+
+  useEffect(() => {
+    getHomeBanner().then((res) => {
+      const filtered = res.filter((item: any) => item?.tour);
+      setData(filtered);
+    });
+  }, []);
 
   return (
     <section className="relative">
@@ -15,7 +23,6 @@ const HeroBanner = () => {
       <div className="relative h-[280px] overflow-hidden">
         <img
           src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80"
-          alt="Travel Banner"
           className="w-full h-full object-cover"
         />
 
@@ -33,48 +40,41 @@ const HeroBanner = () => {
         </div>
       </div>
 
-      {/* Price Tabs */}
+      {/* 🔥 SINGLE BOX (PRICE + TITLE SAME PLACE) */}
       <div className="max-w-[1200px] mx-auto -mt-16 relative z-10 px-4">
-        <div className="rounded-xl overflow-hidden shadow-xl">
+        <div className="rounded-xl overflow-hidden shadow-xl flex bg-[#1e293b] text-white">
 
-          {/* Tabs (Dark Background like 2nd image) */}
-          <div className="flex overflow-x-auto bg-[#1e293b] text-white">
+          {data.map((item, i) => (
+            <Link
+              key={i}
+              href={`/tour/${item.tour.slug}`}
+              onClick={() => setActiveTab(i)}
+              className={`flex-1 flex flex-col items-center justify-center py-5 px-3 text-center border-r border-gray-600 last:border-r-0 transition ${
+                activeTab === i
+                  ? "bg-[#334155]"
+                  : "hover:bg-[#273449]"
+              }`}
+            >
+              {/* Price */}
+              <div className="text-lg md:text-2xl font-bold text-yellow-400">
+                ₹{item.tour?.price}
+              </div>
 
-            {priceCategories.map((cat, i) => (
-              <button
-                key={i}
-                onClick={() => setActivePriceTab(i)}
-                className={`min-w-[90px] md:flex-1 text-center py-4 cursor-pointer transition-all border-r border-gray-600 last:border-r-0 ${
-                  activePriceTab === i
-                    ? "bg-[#334155]"
-                    : "hover:bg-[#273449]"
-                }`}
-              >
-                <div className="text-lg md:text-2xl font-bold text-yellow-400">
-                  {cat.amount}
-                </div>
-              </button>
-            ))}
+              {/* Small Divider */}
+              <div className="w-8 h-[1px] bg-gray-500 my-2"></div>
 
-          </div>
+              {/* Title */}
+              <div className="text-sm md:text-base font-medium">
+                {item.tour?.title}
+              </div>
 
-          {/* Tours Section */}
-          <div className="px-6 py-4 bg-white">
-            <div className="flex flex-wrap justify-between gap-y-2 text-sm">
+              {/* Days */}
+              <div className="text-xs text-gray-300">
+                ({item.tour?.days})
+              </div>
 
-              {priceCategories[activePriceTab]?.tours.map((tour: any) => (
-                <Link
-                  key={tour.slug}
-                  href={`/tour/${tour.slug}`}
-                  className="flex items-center gap-1 text-gray-700 hover:text-orange-500 transition-colors"
-                >
-                  {tour.name}
-                  <ChevronRight className="w-3 h-3" />
-                </Link>
-              ))}
-
-            </div>
-          </div>
+            </Link>
+          ))}
 
         </div>
       </div>

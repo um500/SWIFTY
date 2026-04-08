@@ -4,22 +4,29 @@ export const area = defineType({
   name: "area",
   title: "Area / Location",
   type: "document",
+
   fields: [
+    // ================= AREA NAME =================
     defineField({
       name: "name",
-      title: "Area Name (Kolkata, Siliguri)",
+      title: "Area Name (e.g. Kolkata, Siliguri)",
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
 
+    // ================= SLUG =================
     defineField({
       name: "slug",
       title: "Slug",
       type: "slug",
-      options: { source: "name" },
+      options: {
+        source: "name",
+        maxLength: 96,
+      },
       validation: (Rule) => Rule.required(),
     }),
 
+    // ================= STATE (IMPORTANT) =================
     defineField({
       name: "state",
       title: "Select State",
@@ -28,4 +35,12 @@ export const area = defineType({
       validation: (Rule) => Rule.required(),
     }),
   ],
+
+  // ✅ Better preview in Sanity UI
+  preview: {
+    select: {
+      title: "name",
+      subtitle: "state.name",
+    },
+  },
 });

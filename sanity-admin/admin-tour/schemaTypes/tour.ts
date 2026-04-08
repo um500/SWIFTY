@@ -6,81 +6,122 @@ export default defineType({
   type: "document",
 
   fields: [
-    // ================= TITLE =================
     defineField({
       name: "title",
       title: "Tour Title",
       type: "string",
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) => Rule.required().min(3),
     }),
 
-    // ================= SLUG =================
     defineField({
       name: "slug",
       title: "Slug",
       type: "slug",
-      options: {
-        source: "title",
-        maxLength: 96,
-      },
+      options: { source: "title", maxLength: 96 },
       validation: (Rule) => Rule.required(),
     }),
 
-    // ================= STATE =================
+    defineField({
+      name: "price",
+      title: "Price (₹)",
+      type: "number",
+      validation: (Rule) => Rule.required().min(0),
+    }),
+
+    defineField({
+      name: "days",
+      title: "Days / Nights",
+      type: "string",
+      validation: (Rule) => Rule.required(),
+    }),
+
+    // ✅ COUNTRY
+    defineField({
+      name: "country",
+      title: "Country",
+      type: "reference",
+      to: [{ type: "country" }],
+      validation: (Rule) => Rule.required(),
+    }),
+
+    // 🔥 STATE FILTERED BY COUNTRY
     defineField({
       name: "state",
       title: "State / Destination",
       type: "reference",
       to: [{ type: "state" }],
       validation: (Rule) => Rule.required(),
+
+      options: {
+        filter: ({ document }) => {
+          const countryId = (document as any)?.country?._ref;
+
+          if (!countryId) {
+            return { filter: "false" };
+          }
+
+          return {
+            filter: "country._ref == $countryId",
+            params: { countryId },
+          };
+        },
+      },
+
+      hidden: ({ document }) => !(document as any)?.country,
     }),
 
+    // 🔥 AREA FILTER (already correct)
     defineField({
-  name: "area",
-  title: "Select Area",
-  type: "reference",
-  to: [{ type: "area" }],
-}),
+      name: "area",
+      title: "Select Area",
+      type: "reference",
+      to: [{ type: "area" }],
 
-    // ================= SPECIAL CATEGORY =================
+      options: {
+        filter: ({ document }) => {
+          const stateId = (document as any)?.state?._ref;
+
+          if (!stateId) {
+            return { filter: "false" };
+          }
+
+          return {
+            filter: "state._ref == $stateId",
+            params: { stateId },
+          };
+        },
+      },
+
+      hidden: ({ document }) => !(document as any)?.state,
+    }),
+
     defineField({
       name: "categories",
       title: "Special Categories",
       type: "array",
-      of: [
-        {
-          type: "reference",
-          to: [{ type: "category" }],
-        },
-      ],
+      of: [{ type: "reference", to: [{ type: "category" }] }],
     }),
 
-    // ================= CUSTOMIZED HOLIDAYS =================
     defineField({
       name: "customizedCategories",
       title: "Customized Holiday Categories",
       type: "array",
-      of: [
-        {
-          type: "reference",
-          to: [{ type: "customizedCategory" }],
-        },
-      ],
+      of: [{ type: "reference", to: [{ type: "customizedCategory" }] }],
     }),
 
-    // ================= IMAGES =================
     defineField({
       name: "images",
       title: "Tour Images",
       type: "array",
-      of: [
-        {
-          type: "image",
-          options: {
-            hotspot: true, // ✅ correct place
-          },
-        },
-      ],
+      of: [{ type: "image", options: { hotspot: true } }],
+      validation: (Rule) => Rule.required().min(1),
+    }),
+
+    defineField({
+      name: "featured",
+      title: "Featured Tour",
+      type: "boolean",
+      initialValue: false,
     }),
   ],
 
@@ -88,7 +129,15 @@ export default defineType({
     select: {
       title: "title",
       media: "images.0",
-      subtitle: "state.name",
+      state: "state.name",
+      country: "country.name",
+    },
+    prepare({ title, media, state, country }) {
+      return {
+        title,
+        media,
+        subtitle: `${state || "No State"} • ${country || "No Country"}`,
+      };
     },
   },
 });

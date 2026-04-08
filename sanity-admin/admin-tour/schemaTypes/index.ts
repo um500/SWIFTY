@@ -4,6 +4,9 @@ import { area } from "./area"; // ✅ FIXED
 import tour from "./tour";
 import category from "./category";
 import customizedCategory from "./customizedCategory";
+import homeBanner from "./homeBanner";
+import homeSection from "./homeSection";
+import featuredBanner from "./featuredBanner";
 
 export const schemaTypes = [
   country,
@@ -12,4 +15,7 @@ export const schemaTypes = [
   tour,
   category,
   customizedCategory,
+   homeBanner,
+    homeSection,
+    featuredBanner,
 ];
