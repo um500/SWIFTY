@@ -22,30 +22,36 @@ export const country = defineType({
       options: {
         source: "name",
         maxLength: 96,
+        slugify: (input) =>
+          input.toLowerCase().replace(/\s+/g, "-").slice(0, 96),
       },
       validation: (Rule) => Rule.required(),
     }),
 
-    // ================= IMAGE (🔥 NAVBAR + UI) =================
+    // ================= IMAGE =================
     defineField({
       name: "image",
       title: "Country Image",
       type: "image",
-      options: {
-        hotspot: true,
-      },
+      options: { hotspot: true },
     }),
 
-    // ================= ORDER (🔥 SORT CONTROL) =================
+    // ================= DESCRIPTION =================
+    defineField({
+      name: "description",
+      title: "Description",
+      type: "text",
+    }),
+
+    // ================= ORDER =================
     defineField({
       name: "order",
       title: "Display Order",
       type: "number",
-      description: "Lower number = higher priority (Navbar order)",
+      description: "Lower number = higher priority",
     }),
   ],
 
-  // ================= PREVIEW =================
   preview: {
     select: {
       title: "name",

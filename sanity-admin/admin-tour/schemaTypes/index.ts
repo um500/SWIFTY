@@ -7,6 +7,8 @@ import customizedCategory from "./customizedCategory";
 import homeBanner from "./homeBanner";
 import homeSection from "./homeSection";
 import featuredBanner from "./featuredBanner";
+import travellingNow from "./travellingNow";
+
 
 export const schemaTypes = [
   country,
@@ -18,4 +20,6 @@ export const schemaTypes = [
    homeBanner,
     homeSection,
     featuredBanner,
+    travellingNow,
+
 ];

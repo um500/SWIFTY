@@ -6,24 +6,29 @@ export const state = defineType({
   type: "document",
 
   fields: [
-    // ✅ STATE NAME
+    // ================= NAME =================
     defineField({
       name: "name",
       title: "State Name",
       type: "string",
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) => Rule.required().min(2),
     }),
 
-    // ✅ SLUG
+    // ================= SLUG =================
     defineField({
       name: "slug",
       title: "Slug",
       type: "slug",
-      options: { source: "name", maxLength: 96 },
+      options: {
+        source: "name",
+        maxLength: 96,
+        slugify: (input) =>
+          input.toLowerCase().replace(/\s+/g, "-").slice(0, 96),
+      },
       validation: (Rule) => Rule.required(),
     }),
 
-    // ✅ COUNTRY REFERENCE (India / UAE / Singapore etc.)
+    // ================= COUNTRY =================
     defineField({
       name: "country",
       title: "Country",
@@ -32,24 +37,41 @@ export const state = defineType({
       validation: (Rule) => Rule.required(),
     }),
 
-    // ✅ IMAGE (MOST IMPORTANT 🔥)
+    // ================= IMAGE =================
     defineField({
       name: "image",
       title: "State Image",
       type: "image",
-      options: {
-        hotspot: true,
-      },
+      options: { hotspot: true },
       validation: (Rule) => Rule.required(),
+    }),
+
+    // ================= OPTIONAL (🔥 SEO / UI) =================
+    defineField({
+      name: "description",
+      title: "Description",
+      type: "text",
+    }),
+
+    defineField({
+      name: "order",
+      title: "Display Order",
+      type: "number",
     }),
   ],
 
-  // ✅ PREVIEW (SANITY UI me achha dikhega)
   preview: {
     select: {
       title: "name",
       media: "image",
-      subtitle: "country.name",
+      country: "country.name",
+    },
+    prepare({ title, media, country }) {
+      return {
+        title,
+        subtitle: country ? `🌍 ${country}` : "",
+        media,
+      };
     },
   },
 });

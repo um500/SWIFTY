@@ -117,3 +117,44 @@ export const featuredBannersQuery = `
   "slug": tour->slug.current
 }
 `;
+
+
+export const TRAVELLING_NOW_QUERY = `
+*[_type == "travellingNow"][0]{
+  title,
+  description,
+
+  cards[]{
+    type,
+
+    "destination": select(
+      type == "india" => state->name,
+      type == "international" => country->name
+    ),
+
+    "slug": select(
+      type == "india" => state->slug.current,
+      type == "international" => country->slug.current
+    ),
+
+    "images": images[].asset->url,
+    "image": image.asset->url,
+
+    "tourCount": count(*[
+      _type == "tour" &&
+      (
+        (type == "india" && references(^.state._ref)) ||
+        (type == "international" && references(^.country._ref))
+      )
+    ])
+  },
+
+  // ✅ LOCAL REVIEWS (from same document)
+  reviews[]{
+    name,
+    text,
+    location,
+    rating
+  }
+}
+`;
