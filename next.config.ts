@@ -1,11 +1,16 @@
-/** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: [
-      "images.unsplash.com", // existing
-      "cdn.sanity.io",       // ✅ ADD THIS (VERY IMPORTANT)
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.sanity.io", // 🔥 IMPORTANT (sanity images)
+      },
     ],
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;

@@ -12,7 +12,7 @@ import WhyChooseUs from "@/components/Home/WhyChooseUs";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       <HeroBanner />
       <StudentBanner />
       <DestinationScroller />

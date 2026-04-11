@@ -6,6 +6,7 @@ export default defineType({
   type: "document",
 
   fields: [
+    // ================= BASIC =================
     defineField({
       name: "title",
       title: "Tour Title",
@@ -35,7 +36,22 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
 
-    // ✅ COUNTRY
+    defineField({
+      name: "shortDescription",
+      title: "Short Description",
+      type: "string",
+      description: "Used in cards / preview UI",
+      validation: (Rule) => Rule.max(120),
+    }),
+
+    defineField({
+      name: "rating",
+      title: "Rating",
+      type: "number",
+      validation: (Rule) => Rule.min(1).max(5),
+    }),
+
+    // ================= LOCATION =================
     defineField({
       name: "country",
       title: "Country",
@@ -44,7 +60,6 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
 
-    // 🔥 STATE FILTERED BY COUNTRY
     defineField({
       name: "state",
       title: "State / Destination",
@@ -56,9 +71,7 @@ export default defineType({
         filter: ({ document }) => {
           const countryId = (document as any)?.country?._ref;
 
-          if (!countryId) {
-            return { filter: "false" };
-          }
+          if (!countryId) return { filter: "false" };
 
           return {
             filter: "country._ref == $countryId",
@@ -70,7 +83,6 @@ export default defineType({
       hidden: ({ document }) => !(document as any)?.country,
     }),
 
-    // 🔥 AREA FILTER (already correct)
     defineField({
       name: "area",
       title: "Select Area",
@@ -81,9 +93,7 @@ export default defineType({
         filter: ({ document }) => {
           const stateId = (document as any)?.state?._ref;
 
-          if (!stateId) {
-            return { filter: "false" };
-          }
+          if (!stateId) return { filter: "false" };
 
           return {
             filter: "state._ref == $stateId",
@@ -95,6 +105,7 @@ export default defineType({
       hidden: ({ document }) => !(document as any)?.state,
     }),
 
+    // ================= CATEGORY =================
     defineField({
       name: "categories",
       title: "Special Categories",
@@ -109,6 +120,7 @@ export default defineType({
       of: [{ type: "reference", to: [{ type: "customizedCategory" }] }],
     }),
 
+    // ================= IMAGES =================
     defineField({
       name: "images",
       title: "Tour Images",
@@ -117,14 +129,36 @@ export default defineType({
       validation: (Rule) => Rule.required().min(1),
     }),
 
+    // ================= FLAGS =================
     defineField({
       name: "featured",
       title: "Featured Tour",
       type: "boolean",
       initialValue: false,
     }),
+
+    // 🔥 NEW: FEATURE CARD SECTION CONTROL
+    defineField({
+      name: "sections",
+      title: "Show in Feature Sections",
+      type: "array",
+      of: [
+        {
+          type: "string",
+          options: {
+            list: [
+              { title: "Last Minute", value: "last" },
+              { title: "Visa", value: "visa" },
+              { title: "Customized", value: "custom" },
+            ],
+          },
+        },
+      ],
+      description: "Select where this tour should appear",
+    }),
   ],
 
+  // ================= PREVIEW =================
   preview: {
     select: {
       title: "title",

@@ -158,3 +158,20 @@ export const TRAVELLING_NOW_QUERY = `
   }
 }
 `;
+
+
+// ================= FEATURE CARDS QUERY =================
+export const FEATURE_CARDS_QUERY = `
+*[_type == "featureCard"]{
+  sections,
+
+  "title": tour->title,
+  "price": tour->price,
+  "slug": tour->slug.current,
+
+  "image": tour->images[0].asset->url,
+
+  "state": tour->state->name,
+  "country": tour->country->name
+}
+`;

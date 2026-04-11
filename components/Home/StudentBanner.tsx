@@ -2,15 +2,17 @@ import Link from "next/link";
 
 const StudentBanner = () => {
   return (
-    <div className="w-full flex flex-col items-center justify-center py-6 bg-vw-light-bg border-b border-vw-border">
+    <div className="w-full flex flex-col items-center justify-center py-6 px-4 bg-gray-100 border-b border-gray-200">
 
-      <p className="text-sm text-vw-text text-center">
+      {/* TEXT */}
+      <p className="text-sm md:text-base text-gray-700 text-center max-w-2xl">
         Discover handpicked travel experiences across India and the world — plan your perfect journey today.
       </p>
 
+      {/* BUTTON */}
       <Link
         href="/india/all"
-        className="mt-4 inline-flex items-center justify-center px-7 py-2.5 text-sm font-medium rounded-lg border border-[#1e3a8a] text-[#1e3a8a] bg-white transition-all duration-200 hover:bg-[#1e3a8a] hover:text-white hover:shadow-md"
+        className="mt-4 inline-flex items-center justify-center px-6 py-2.5 text-sm font-medium rounded-lg border border-blue-900 text-blue-900 bg-white transition-all duration-200 hover:bg-blue-900 hover:text-white hover:shadow-lg"
       >
         View all Tours →
       </Link>

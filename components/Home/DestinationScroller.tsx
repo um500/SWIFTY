@@ -20,9 +20,8 @@ const DestinationScroller = () => {
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const isPaused = useRef(false); // 🔥 control auto scroll
+  const isPaused = useRef(false);
 
-  // ✅ Fetch data
   useEffect(() => {
     const loadData = async () => {
       const data = await client.fetch(destinationQuery);
@@ -31,7 +30,6 @@ const DestinationScroller = () => {
     loadData();
   }, []);
 
-  // ✅ Dynamic loop
   const getLoopData = (data: Destination[]) => {
     if (!data.length) return [];
 
@@ -49,7 +47,6 @@ const DestinationScroller = () => {
 
   const loopData = getLoopData(destinations);
 
-  // ✅ 🔥 AUTO SCROLL (HOVER PAUSE SUPPORT)
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -72,7 +69,6 @@ const DestinationScroller = () => {
     return () => cancelAnimationFrame(raf);
   }, []);
 
-  // ✅ Arrow click
   const handleScroll = (dir: "left" | "right") => {
     const el = scrollRef.current;
     if (!el) return;
@@ -90,52 +86,57 @@ const DestinationScroller = () => {
   };
 
   return (
-    <section className="py-8 max-w-[1440px] mx-auto px-4 relative">
+    // 🔥 FIX: FULL WIDTH WHITE
+    <section className="w-full bg-white py-8">
 
-      {/* LEFT */}
-      <button
-        onClick={() => handleScroll("left")}
-        className="absolute left-0 top-1/2 -translate-y-1/2 z-30 bg-white shadow-md rounded-full p-2 hover:bg-gray-100"
-      >
-        ◀
-      </button>
+      {/* CENTER CONTENT */}
+      <div className="max-w-[1440px] mx-auto px-4 relative">
 
-      {/* RIGHT */}
-      <button
-        onClick={() => handleScroll("right")}
-        className="absolute right-0 top-1/2 -translate-y-1/2 z-30 bg-white shadow-md rounded-full p-2 hover:bg-gray-100"
-      >
-        ▶
-      </button>
+        {/* LEFT */}
+        <button
+          onClick={() => handleScroll("left")}
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-30 bg-gray-100 text-gray-800 shadow-md rounded-full p-2 hover:bg-gray-200 cursor-pointer"
+        >
+          ◀
+        </button>
 
-      {/* SCROLLER */}
-      <div
-        ref={scrollRef}
-        className="flex gap-6 overflow-x-scroll whitespace-nowrap scrollbar-hide w-full"
-      >
-        {loopData.map((dest, index) => (
-          <Link
-            key={index}
-            href={`/${dest.country?.slug}/${dest.slug}`}
-            onMouseEnter={() => (isPaused.current = true)}  // 🔥 HOVER PAUSE
-            onMouseLeave={() => (isPaused.current = false)} // 🔥 RESUME
-            className="flex flex-col items-center gap-2 flex-shrink-0 group"
-          >
-            <img
-              src={dest.image}
-              alt={dest.name}
-              className="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover border-2 border-transparent group-hover:border-yellow-400"
-            />
+        {/* RIGHT */}
+        <button
+          onClick={() => handleScroll("right")}
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-30 bg-gray-100 text-gray-800 shadow-md rounded-full p-2 hover:bg-gray-200 cursor-pointer"
+        >
+          ▶
+        </button>
 
-            <span className="text-xs font-semibold text-center max-w-[80px] truncate">
-              {dest.name}
-            </span>
+        {/* SCROLLER */}
+        <div
+          ref={scrollRef}
+          className="flex gap-6 overflow-x-scroll whitespace-nowrap scrollbar-hide w-full"
+        >
+          {loopData.map((dest, index) => (
+            <Link
+              key={index}
+              href={`/${dest.country?.slug}/${dest.slug}`}
+              onMouseEnter={() => (isPaused.current = true)}
+              onMouseLeave={() => (isPaused.current = false)}
+              className="flex flex-col items-center gap-2 flex-shrink-0 group"
+            >
+              <img
+                src={dest.image}
+                alt={dest.name}
+                className="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover border-2 border-transparent group-hover:border-yellow-400"
+              />
 
-            <span className="text-[10px] text-gray-500">
-              {dest.tours} tours
-            </span>
-          </Link>
-        ))}
+              <span className="text-xs font-semibold text-center max-w-[80px] truncate text-gray-900">
+                {dest.name}
+              </span>
+
+              <span className="text-[10px] text-gray-500">
+                {dest.tours} tours
+              </span>
+            </Link>
+          ))}
+        </div>
       </div>
     </section>
   );

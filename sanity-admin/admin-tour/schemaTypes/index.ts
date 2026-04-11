@@ -8,6 +8,7 @@ import homeBanner from "./homeBanner";
 import homeSection from "./homeSection";
 import featuredBanner from "./featuredBanner";
 import travellingNow from "./travellingNow";
+import featureCard from "./featureCard";
 
 
 export const schemaTypes = [
@@ -21,5 +22,6 @@ export const schemaTypes = [
     homeSection,
     featuredBanner,
     travellingNow,
+    featureCard,
 
 ];

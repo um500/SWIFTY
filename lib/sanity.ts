@@ -4,7 +4,8 @@ import {
   CUSTOMIZED_WITH_TOURS_QUERY,
   SINGLE_CUSTOMIZED_QUERY,
   homeBannerQuery,
-  TRAVELLING_NOW_QUERY, // ✅ ADD THIS
+  TRAVELLING_NOW_QUERY,
+  FEATURE_CARDS_QUERY,
 } from "./queries";
 
 // ================= CLIENT =================
@@ -62,6 +63,16 @@ export const getTravellingNow = async () => {
     return data;
   } catch (error) {
     console.error("TravellingNow fetch error:", error);
+    return null;
+  }
+};
+
+// ================= FEATURE CARDS =================
+export const getFeatureCards = async () => {
+  try {
+    return await client.fetch(FEATURE_CARDS_QUERY);
+  } catch (error) {
+    console.error("FeatureCards Fetch Error:", error);
     return null;
   }
 };
