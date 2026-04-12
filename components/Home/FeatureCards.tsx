@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { getFeatureCards } from "@/lib/sanity";
 
-// ================= MAIN =================
+// ============= MAIN =============
 export default function FeatureCards() {
   const [last, setLast] = useState<any[]>([]);
   const [visa, setVisa] = useState<any[]>([]);

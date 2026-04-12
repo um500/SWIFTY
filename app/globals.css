@@ -42,3 +42,7 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+.animate-scroll:hover {
+  animation-play-state: paused;
+}

@@ -6,6 +6,8 @@ import {
   homeBannerQuery,
   TRAVELLING_NOW_QUERY,
   FEATURE_CARDS_QUERY,
+  COUNTRY_FAV_QUERY,
+  POPULAR_TOURS_QUERY,
 } from "./queries";
 
 // ================= CLIENT =================
@@ -74,5 +76,37 @@ export const getFeatureCards = async () => {
   } catch (error) {
     console.error("FeatureCards Fetch Error:", error);
     return null;
+  }
+};
+
+// ================= COUNTRY FAV =================
+export const getCountryFav = async () => {
+  try {
+    const data = await client.fetch(COUNTRY_FAV_QUERY);
+
+    // ✅ flatten all documents
+    const countries = data.flatMap((item: any) => item?.countries || []);
+
+    // ✅ remove duplicates
+    const unique = Array.from(
+      new Map(countries.map((c: any) => [c._id, c])).values()
+    );
+
+    return unique;
+  } catch (error) {
+    console.error("CountryFav Fetch Error:", error);
+    return [];
+  }
+};
+
+
+
+export const getPopularTours = async () => {
+  try {
+    const data = await client.fetch(POPULAR_TOURS_QUERY);
+    return data || [];
+  } catch (error) {
+    console.error("PopularTours Fetch Error:", error);
+    return [];
   }
 };

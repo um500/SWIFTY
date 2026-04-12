@@ -175,3 +175,48 @@ export const FEATURE_CARDS_QUERY = `
   "country": tour->country->name
 }
 `;
+
+// ================= COUNTRY FAV QUERY (FIXED) =================
+export const COUNTRY_FAV_QUERY = `
+*[_type == "countryFav"]{
+  title,
+
+  "countries": countries[]->{
+    _id,
+    name,
+    "slug": slug.current,
+    "image": image.asset->url,
+
+    "tourCount": count(*[
+      _type == "tour" &&
+      (
+        references(^._id) ||
+        state->country._ref == ^._id
+      )
+    ])
+  }
+}
+`;
+
+
+
+// ================= POPULAR TOURS QUERY (FIXED) =================
+export const POPULAR_TOURS_QUERY = `
+*[_type == "popularTours"]{
+  title,
+
+  tours[]->{
+    _id,
+    title,
+    "slug": slug.current,
+
+    days,
+    price,
+
+    state->{ name },
+    country->{ name },
+
+    "images": images[].asset->url
+  }
+}
+`;

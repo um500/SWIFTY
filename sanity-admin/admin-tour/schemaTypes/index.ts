@@ -9,12 +9,14 @@ import homeSection from "./homeSection";
 import featuredBanner from "./featuredBanner";
 import travellingNow from "./travellingNow";
 import featureCard from "./featureCard";
+import countryFav from "./countryFav";
+import popular from "./popular";
 
 
 export const schemaTypes = [
   country,
   state,
-  area, // ✅ area add karo yaha
+  area, 
   tour,
   category,
   customizedCategory,
@@ -23,5 +25,7 @@ export const schemaTypes = [
     featuredBanner,
     travellingNow,
     featureCard,
+    countryFav,
+    popular,
 
 ];
