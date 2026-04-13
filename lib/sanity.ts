@@ -8,6 +8,7 @@ import {
   FEATURE_CARDS_QUERY,
   COUNTRY_FAV_QUERY,
   POPULAR_TOURS_QUERY,
+  reviewsQuery,
 } from "./queries";
 
 // ================= CLIENT =================
@@ -58,11 +59,10 @@ export const getHomeBanner = async () => {
   }
 };
 
-// ================= TRAVELLING NOW ================= ✅ NEW
+// ================= TRAVELLING NOW =================
 export const getTravellingNow = async () => {
   try {
-    const data = await client.fetch(TRAVELLING_NOW_QUERY);
-    return data;
+    return await client.fetch(TRAVELLING_NOW_QUERY);
   } catch (error) {
     console.error("TravellingNow fetch error:", error);
     return null;
@@ -83,15 +83,10 @@ export const getFeatureCards = async () => {
 export const getCountryFav = async () => {
   try {
     const data = await client.fetch(COUNTRY_FAV_QUERY);
-
-    // ✅ flatten all documents
     const countries = data.flatMap((item: any) => item?.countries || []);
-
-    // ✅ remove duplicates
     const unique = Array.from(
       new Map(countries.map((c: any) => [c._id, c])).values()
     );
-
     return unique;
   } catch (error) {
     console.error("CountryFav Fetch Error:", error);
@@ -99,14 +94,24 @@ export const getCountryFav = async () => {
   }
 };
 
-
-
+// ================= POPULAR TOURS =================
 export const getPopularTours = async () => {
   try {
     const data = await client.fetch(POPULAR_TOURS_QUERY);
     return data || [];
   } catch (error) {
     console.error("PopularTours Fetch Error:", error);
+    return [];
+  }
+};
+
+// ================= REVIEWS =================
+export const getReviews = async () => {
+  try {
+    const data = await client.fetch(reviewsQuery);
+    return data || [];
+  } catch (error) {
+    console.error("Reviews Fetch Error:", error);
     return [];
   }
 };

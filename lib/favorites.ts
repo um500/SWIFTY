@@ -2,30 +2,36 @@
 
 const STORAGE_KEY = "favorites";
 
-// ✅ GET ALL FAVORITES
-export const getFavorites = (): string[] => {
-  if (typeof window === "undefined") return [];
-
+// ✅ SAFE PARSE
+const parseJSON = (value: string | null) => {
   try {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
+    return value ? JSON.parse(value) : [];
   } catch {
     return [];
   }
 };
 
-// ✅ SAVE FAVORITES
+// ✅ GET ALL FAVORITES
+export const getFavorites = (): string[] => {
+  if (typeof window === "undefined") return [];
+  return parseJSON(localStorage.getItem(STORAGE_KEY));
+};
+
+// ✅ SAVE FAVORITES + 🔥 EVENT TRIGGER
 export const saveFavorites = (favorites: string[]) => {
   if (typeof window === "undefined") return;
 
   localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
+
+  // 🔥 IMPORTANT: notify all components
+  window.dispatchEvent(new Event("favoritesUpdated"));
 };
 
 // ✅ TOGGLE FAVORITE
 export const toggleFavorite = (id: string): string[] => {
   const current = getFavorites();
 
-  let updated;
+  let updated: string[];
 
   if (current.includes(id)) {
     updated = current.filter((item) => item !== id);
@@ -39,6 +45,10 @@ export const toggleFavorite = (id: string): string[] => {
 
 // ✅ CHECK FAVORITE
 export const isFavorite = (id: string): boolean => {
-  const current = getFavorites();
-  return current.includes(id);
+  return getFavorites().includes(id);
+};
+
+// ✅ CLEAR ALL (optional future use)
+export const clearFavorites = () => {
+  saveFavorites([]);
 };

@@ -11,6 +11,7 @@ import travellingNow from "./travellingNow";
 import featureCard from "./featureCard";
 import countryFav from "./countryFav";
 import popular from "./popular";
+import review from "./review";
 
 
 export const schemaTypes = [
@@ -27,5 +28,6 @@ export const schemaTypes = [
     featureCard,
     countryFav,
     popular,
+    review,
 
 ];

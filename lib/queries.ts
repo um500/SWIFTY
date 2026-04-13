@@ -220,3 +220,18 @@ export const POPULAR_TOURS_QUERY = `
   }
 }
 `;
+
+
+export const reviewsQuery = `
+  *[_type == "review" && isActive == true] | order(_createdAt desc) {
+    _id,
+    name,
+    location,
+    rating,
+    tourName,
+    reviewText,
+    date,
+    "avatar": avatar.asset->url,
+    "bgImage": bgImage.asset->url
+  }
+`;

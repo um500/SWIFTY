@@ -46,3 +46,12 @@ body {
 .animate-scroll:hover {
   animation-play-state: paused;
 }
+
+/* scrollbar remove */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

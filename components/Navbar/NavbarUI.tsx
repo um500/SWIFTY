@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useEffect } from "react";
+import { Heart } from "lucide-react";
+import { getFavorites } from "@/lib/favorites";
 import Link from "next/link";
 import { Search, Phone, Menu, X, ChevronDown, User } from "lucide-react";
 import SpecialToursDropdown from "./SpecialToursDropdown";
@@ -21,6 +24,23 @@ export default function NavbarUI({
   const [indiaState, setIndiaState] = useState<any>(null);
   const [selectedCountry, setSelectedCountry] = useState<any>(null);
   const [selectedState, setSelectedState] = useState<any>(null);
+  const [favCount, setFavCount] = useState(0);
+
+  useEffect(() => {
+    const updateFav = () => {
+      setFavCount(getFavorites().length);
+    };
+
+    updateFav();
+
+    // 🔥 custom event (real-time update)
+    window.addEventListener("favoritesUpdated", updateFav);
+
+    return () => {
+      window.removeEventListener("favoritesUpdated", updateFav);
+    };
+  }, []);
+
 
   const toggle = (key: string) => {
     setOpenMenu((prev: any) => ({
@@ -30,7 +50,7 @@ export default function NavbarUI({
   };
 
   return (
-    <div className="bg-gradient-to-r from-[#0f172a] to-[#1e293b] text-white font-serif">
+  <div className="sticky top-0 z-50 bg-gradient-to-r from-[#0f172a] to-[#1e293b] text-white font-serif">
 
       {/* ================= HEADER ================= */}
       <div className="max-w-7xl mx-auto flex items-center justify-between py-3 px-4">
@@ -59,14 +79,30 @@ export default function NavbarUI({
         {/* RIGHT */}
         <div className="flex items-center gap-3">
 
+          {/* PHONE */}
           <div className="hidden xl:flex items-center gap-2 bg-[#123447] px-4 py-2 rounded-full">
             <Phone size={14} />
             <span className="text-sm">+91 8969457707</span>
           </div>
 
+          {/* ❤️ FAVORITE */}
+          <Link href="/wishlist" className="relative">
+            <div className="bg-white text-black p-2 rounded-full shadow cursor-pointer hover:scale-110 transition">
+              <Heart className="w-5 h-5" />
+            </div>
+
+            {favCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] px-1.5 rounded-full">
+                {favCount}
+              </span>
+            )}
+          </Link>
+
+          {/* COUNTRY */}
           <div className="bg-white text-black px-3 py-1 rounded">
             🇮🇳 India
           </div>
+
         </div>
       </div>
 

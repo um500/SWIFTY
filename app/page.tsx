@@ -4,12 +4,11 @@ import DestinationScroller from "@/components/Home/DestinationScroller";
 import FeaturedTour from "@/components/Home/FeaturedTour";
 import TravellingNow from "@/components/Home/TravellingNow";
 import FeatureCards from "@/components/Home/FeatureCards";
-import KashmirPromo from "@/components/Home/CountryPromo";
 import ContinuePlan from "@/components/Home/ContinuePlan";
-import EuropePromo from "@/components/Home/EuropePromo";
-import PopularTours from "@/components/Home/PopularTours";
-import WhyChooseUs from "@/components/Home/WhyChooseUs";
 import CountryPromo from "@/components/Home/CountryPromo";
+import PopularTours from "@/components/Home/PopularTours";
+import Reviews from"@/components/Home/review";
+import WhyChooseUs from "@/components/Home/WhyChooseUs";
 
 const Index = () => {
   return (
@@ -23,7 +22,7 @@ const Index = () => {
       <FeatureCards />
       <CountryPromo />
       <PopularTours />
-      <EuropePromo />
+      <Reviews />
       <WhyChooseUs />
     </div>
   );
