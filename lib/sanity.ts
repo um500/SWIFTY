@@ -9,6 +9,8 @@ import {
   COUNTRY_FAV_QUERY,
   POPULAR_TOURS_QUERY,
   reviewsQuery,
+  SINGLE_BLOG_QUERY,
+  BLOGS_QUERY,
 } from "./queries";
 
 // ================= CLIENT =================
@@ -113,5 +115,27 @@ export const getReviews = async () => {
   } catch (error) {
     console.error("Reviews Fetch Error:", error);
     return [];
+  }
+};
+
+// BLOG LIST
+export const getBlogs = async () => {
+  try {
+    const data = await client.fetch(BLOGS_QUERY);
+    return data || [];
+  } catch (error) {
+    console.error("Blogs Fetch Error:", error);
+    return [];
+  }
+};
+
+// SINGLE BLOG
+export const getBlogBySlug = async (slug: string) => {
+  try {
+    const data = await client.fetch(SINGLE_BLOG_QUERY, { slug });
+    return data || null;
+  } catch (error) {
+    console.error("Single Blog Fetch Error:", error);
+    return null;
   }
 };

@@ -12,6 +12,7 @@ import featureCard from "./featureCard";
 import countryFav from "./countryFav";
 import popular from "./popular";
 import review from "./review";
+import blog from "./blog";
 
 
 export const schemaTypes = [
@@ -29,5 +30,6 @@ export const schemaTypes = [
     countryFav,
     popular,
     review,
+    blog,
 
 ];

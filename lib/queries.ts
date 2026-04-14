@@ -235,3 +235,46 @@ export const reviewsQuery = `
     "bgImage": bgImage.asset->url
   }
 `;
+
+
+// ================= BLOG LIST =================
+export const BLOGS_QUERY = `
+*[_type == "blog"] | order(_createdAt desc){
+  _id,
+  title,
+  "slug": slug.current,
+  shortDesc,
+
+  "thumbnail": coalesce(thumbnail.asset->url, "")
+}
+`;
+
+
+// ================= SINGLE BLOG =================
+export const SINGLE_BLOG_QUERY = `
+*[_type == "blog" && slug.current == $slug][0]{
+  _id,
+  title,
+  "slug": slug.current,
+
+  content[]{
+    ...,
+
+    _type == "image" => {
+      "url": asset->url
+    },
+
+    _type == "tourSection" => {
+      title,
+      tours[]->{
+        _id,
+        title,
+        price,
+        days,
+        "slug": slug.current,
+        "image": images[0].asset->url
+      }
+    }
+  }
+}
+`;

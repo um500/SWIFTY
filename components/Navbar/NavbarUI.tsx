@@ -50,7 +50,7 @@ export default function NavbarUI({
   };
 
   return (
-  <div className="sticky top-0 z-50 bg-gradient-to-r from-[#0f172a] to-[#1e293b] text-white font-serif">
+    <div className="sticky top-0 z-50 bg-gradient-to-r from-[#0f172a] to-[#1e293b] text-white font-serif">
 
       {/* ================= HEADER ================= */}
       <div className="max-w-7xl mx-auto flex items-center justify-between py-3 px-4">
@@ -290,8 +290,19 @@ export default function NavbarUI({
           )}
         </div>
 
-        <Link href="/blog">Blog</Link>
-        <Link href="/contact">Contact Us</Link>
+        <Link
+  href="/blog"
+  className="cursor-pointer hover:text-yellow-300 py-2 transition"
+>
+  Blog
+</Link>
+
+<Link
+  href="/contact"
+  className="cursor-pointer hover:text-yellow-300 py-2 transition"
+>
+  Contact Us
+</Link>
       </div>
 
       {/* ================= MOBILE SIDEBAR ================= */}
@@ -491,11 +502,17 @@ export default function NavbarUI({
             {/* ================= EXTRA LINKS ================= */}
             <div className="pt-2 border-t space-y-3">
 
-              <Link href="/blog" className="block text-gray-600">
+              <Link
+                href="/blog"
+                className="cursor-pointer hover:text-yellow-300 py-2 transition"
+              >
                 Blog
               </Link>
 
-              <Link href="/contact" className="block font-medium">
+              <Link
+                href="/contact"
+                className="cursor-pointer hover:text-yellow-300 py-2 transition"
+              >
                 Contact Us
               </Link>
 
