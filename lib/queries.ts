@@ -259,11 +259,9 @@ export const SINGLE_BLOG_QUERY = `
 
   content[]{
     ...,
-
     _type == "image" => {
       "url": asset->url
     },
-
     _type == "tourSection" => {
       title,
       tours[]->{

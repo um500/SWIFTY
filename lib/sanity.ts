@@ -132,7 +132,12 @@ export const getBlogs = async () => {
 // SINGLE BLOG
 export const getBlogBySlug = async (slug: string) => {
   try {
+    console.log("Fetching blog:", slug);
+
     const data = await client.fetch(SINGLE_BLOG_QUERY, { slug });
+
+    console.log("Blog Data:", data);
+
     return data || null;
   } catch (error) {
     console.error("Single Blog Fetch Error:", error);
