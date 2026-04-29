@@ -276,3 +276,63 @@ export const SINGLE_BLOG_QUERY = `
   }
 }
 `;
+
+// ALL TOURS
+export const allToursQuery = `*[_type == "tour"]{
+  _id,
+  title,
+  slug,
+  price,
+  duration,
+  rating,
+  "image": mainImage.asset->url,
+  category->{name, slug},
+  state->{name},
+  country->{name}
+}`;
+
+// CATEGORY FILTER
+export const TOURS_BY_CATEGORY = `
+*[_type=="tour" && category == $category]{
+  _id,
+  title,
+  "image": image.asset->url,
+  price,
+  duration
+}
+`;
+
+
+export const TOURS_QUERY = `*[_type == "tour"]{
+  _id,
+  title,
+  price,
+  duration,
+  category,
+  country,
+  state,
+  city,
+  slug,
+  "image": mainImage.asset->url
+}`;
+
+// ================= TOURS LISTING PAGE =================
+export const TOURS_LISTING_QUERY = `
+*[
+  _type == "tour"
+  && ($stateSlug == "" || state->slug.current == $stateSlug)
+  && ($countrySlug == "" || country->slug.current == $countrySlug)
+  && ($areaSlug == "" || references(*[_type=="area" && slug.current==$areaSlug]._id))
+] | order(_createdAt desc) {
+  _id,
+  title,
+  "slug": slug.current,
+  price,
+  days,
+  "image": images[0].asset->url,
+  "state": state->name,
+  "stateSlug": state->slug.current,
+  "country": country->name,
+  "countrySlug": country->slug.current
+}
+`;

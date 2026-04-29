@@ -1,166 +1,130 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { getFavorites, toggleFavorite } from "@/lib/favorites";
-import { Heart, Clock } from "lucide-react";
-import { client } from "@/lib/sanity";
+
+interface Tour {
+  _id: string;
+  title: string;
+  slug?: { current?: string };
+  price: number;
+  days?: string;
+  image: string;
+}
 
 export default function WishlistPage() {
-  const [tours, setTours] = useState<any[]>([]);
-  const [favorites, setFavorites] = useState<string[]>([]);
-  const [imageIndex, setImageIndex] = useState<Record<string, number>>({});
+  const [wishlist, setWishlist] = useState<Tour[]>([]);
 
-  // ✅ FETCH DATA
+  // ✅ LOAD FUNCTION
+  const loadWishlist = () => {
+    try {
+      const data = JSON.parse(localStorage.getItem("wishlist") || "[]");
+      setWishlist(data);
+    } catch (err) {
+      console.error("Wishlist load error:", err);
+      setWishlist([]);
+    }
+  };
+
+  // ✅ INITIAL + SYNC
   useEffect(() => {
-    const favIds = getFavorites();
-    setFavorites(favIds);
+    loadWishlist();
 
-    if (!favIds.length) return;
+    const handleUpdate = () => loadWishlist();
 
-    client
-      .fetch(
-        `*[_type == "tour" && _id in $ids]{
-          _id,
-          title,
-          "slug": slug.current,
-          price,
-          days,
-          "images": images[].asset->url
-        }`,
-        { ids: favIds }
-      )
-      .then((res) => {
-        setTours(res);
-      });
+    window.addEventListener("wishlistUpdated", handleUpdate);
+    window.addEventListener("storage", handleUpdate);
+
+    return () => {
+      window.removeEventListener("wishlistUpdated", handleUpdate);
+      window.removeEventListener("storage", handleUpdate);
+    };
   }, []);
 
-  // ✅ IMAGE AUTO SLIDER
-  useEffect(() => {
-    if (!tours.length) return;
+  // ✅ REMOVE FUNCTION
+  const removeFromWishlist = (id: string) => {
+    try {
+      const stored = JSON.parse(localStorage.getItem("wishlist") || "[]");
 
-    const interval = setInterval(() => {
-      setImageIndex((prev) => {
-        const updated: Record<string, number> = {};
+      const updated = stored.filter((t: any) => t._id !== id);
 
-        tours.forEach((tour) => {
-          const len = tour?.images?.length || 1;
+      localStorage.setItem("wishlist", JSON.stringify(updated));
 
-          updated[tour._id] =
-            ((prev[tour._id] || 0) + 1) % len;
-        });
+      // 🔥 update all pages
+      window.dispatchEvent(new Event("wishlistUpdated"));
 
-        return { ...prev, ...updated };
-      });
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, [tours]);
-
-  // ❌ EMPTY STATE
-  if (!favorites.length) {
-    return (
-      <div className="py-20 text-center">
-        <h2 className="text-xl font-semibold">No favorites yet </h2>
-      </div>
-    );
-  }
+      setWishlist(updated);
+    } catch (err) {
+      console.error("Remove error:", err);
+    }
+  };
 
   return (
-    <section className="py-12 bg-white min-h-screen">
-      <div className="max-w-[1300px] mx-auto px-4">
+    <div className="max-w-6xl mx-auto p-6">
 
-        {/* HEADER */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">
-            Your Wishlist 
-          </h2>
-          <div className="w-12 h-[3px] bg-orange-500 mt-1 rounded" />
+      <h1 className="text-3xl font-bold mb-6">Your Wishlist</h1>
+
+      {/* ❌ EMPTY */}
+      {wishlist.length === 0 && (
+        <div className="text-center py-20">
+          <p className="text-gray-500 text-lg">No tours in wishlist 😢</p>
+          <Link href="/">
+            <button className="mt-4 px-6 py-2 bg-yellow-400 rounded-lg">
+              Explore Tours
+            </button>
+          </Link>
         </div>
+      )}
 
-        {/* GRID */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* ✅ LIST */}
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {wishlist.map((tour) => (
+          <div
+            key={tour._id}
+            className="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden"
+          >
+            {/* IMAGE */}
+            <div className="relative h-48">
+              <Image
+                src={tour.image || "/placeholder.jpg"}
+                alt={tour.title}
+                fill
+                className="object-cover"
+              />
 
-          {tours.map((tour) => {
-            const isFav = favorites.includes(tour._id);
-            const images = tour?.images || [];
-            const currentIndex = imageIndex[tour._id] || 0;
-
-            return (
-              <div
-                key={tour._id}
-                className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group"
+              {/* ❤️ REMOVE */}
+              <button
+                onClick={() => removeFromWishlist(tour._id)}
+                className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full"
               >
-                {/* IMAGE */}
-                <div className="relative overflow-hidden">
+                ❤️
+              </button>
+            </div>
 
-                  {/* ❤️ REMOVE */}
-                  <button
-                    onClick={() => {
-                      const updated = toggleFavorite(tour._id);
-                      setFavorites(updated);
-                      setTours((prev) =>
-                        prev.filter((t) => t._id !== tour._id)
-                      );
+            {/* CONTENT */}
+            <div className="p-4">
+              <h2 className="font-semibold text-lg">{tour.title}</h2>
 
-                      window.dispatchEvent(new Event("favoritesUpdated"));
-                    }}
-                    className="absolute top-3 right-3 z-10 bg-white/90 backdrop-blur rounded-full p-2 shadow hover:scale-110 transition"
-                  >
-                    <Heart className="w-4 h-4 fill-red-500 text-red-500" />
+              <p className="text-sm text-gray-500 mt-1">
+                {tour.days || 5} Days
+              </p>
+
+              <div className="flex justify-between items-center mt-3">
+                <span className="text-orange-500 font-semibold">
+                  ₹{tour.price?.toLocaleString()}
+                </span>
+
+                <Link href={`/tours/${tour.slug?.current || "#"}`}>
+                  <button className="text-sm text-blue-600">
+                    View →
                   </button>
-
-                  {/* IMAGE SLIDER */}
-                  {images.length > 0 ? (
-                    <img
-                      src={images[currentIndex]}
-                      alt={tour.title}
-                      className="w-full h-[200px] object-cover transition duration-700 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="w-full h-[200px] bg-gray-200 flex items-center justify-center text-sm">
-                      No Image
-                    </div>
-                  )}
-                </div>
-
-                {/* CONTENT */}
-                <div className="p-4">
-
-                  <h3 className="font-semibold text-gray-900 text-sm">
-                    {tour.title}
-                  </h3>
-
-                  <div className="flex items-center gap-2 text-xs text-gray-500 mt-2">
-                    <Clock className="w-3 h-3" />
-                    {tour.days}D/{tour.days - 1}N
-                  </div>
-
-                  <div className="border-t my-3"></div>
-
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="text-xs text-gray-500">Starts from</p>
-                      <p className="font-bold text-gray-900">
-                        ₹{tour.price}
-                      </p>
-                    </div>
-
-                    <Link
-                      href={`/tour/${tour.slug}`}
-                      className="text-orange-500 text-sm font-medium hover:underline"
-                    >
-                      View →
-                    </Link>
-                  </div>
-
-                </div>
+                </Link>
               </div>
-            );
-          })}
-
-        </div>
+            </div>
+          </div>
+        ))}
       </div>
-    </section>
+    </div>
   );
 }

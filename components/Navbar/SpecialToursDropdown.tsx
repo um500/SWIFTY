@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 type Category = {
@@ -9,7 +10,11 @@ type Category = {
   images?: string[];
 };
 
-export default function SpecialToursDropdown({ data = [] }: { data: Category[] }) {
+interface Props {
+  data: Category[];
+}
+
+export default function SpecialToursDropdown({ data = [] }: Props) {
   return (
     <div className="bg-[#f5f7fb] rounded-xl shadow-xl p-6 w-full">
 
@@ -23,28 +28,42 @@ export default function SpecialToursDropdown({ data = [] }: { data: Category[] }
             No tours available
           </p>
         ) : (
-          data.map((item) => <Card key={item._id} item={item} />)
+          data.map((item) => (
+            <Card key={item._id} item={item} />
+          ))
         )}
       </div>
     </div>
   );
 }
 
+// ✅ CARD COMPONENT
 function Card({ item }: { item: Category }) {
+  const router = useRouter();
+
   const images = item.images || [];
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
     if (images.length <= 1) return;
+
     const interval = setInterval(() => {
       setIndex((prev) => (prev + 1) % images.length);
     }, 3000);
+
     return () => clearInterval(interval);
   }, [images]);
 
-  return (
-    <div className="bg-white rounded-lg overflow-hidden border hover:shadow-2xl transition-all duration-300 group">
+  const handleClick = () => {
+    const slug = item.title.toLowerCase().replace(/\s+/g, "-");
+    router.push(`/tours?category=${slug}`);
+  };
 
+  return (
+    <div
+      onClick={handleClick}
+      className="bg-white rounded-lg overflow-hidden border hover:shadow-2xl transition-all duration-300 group cursor-pointer"
+    >
       {/* IMAGE */}
       <div className="relative h-[140px] overflow-hidden">
         {images.length > 0 ? (

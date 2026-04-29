@@ -7,54 +7,43 @@ import {
 } from "@/lib/queries";
 
 export default async function Navbar() {
-  const data = await client.fetch(MENU_QUERY);
+  const [data, customCategories, specialTours] = await Promise.all([
+    client.fetch(MENU_QUERY),
+    client.fetch(CUSTOMIZED_WITH_TOURS_QUERY),
+    client.fetch(SPECIAL_TOURS_QUERY),
+  ]);
 
-  const customCategories = await client.fetch(CUSTOMIZED_WITH_TOURS_QUERY);
-  const specialTours = await client.fetch(SPECIAL_TOURS_QUERY);
+  const countries = data?.countries || [];
+  const states = data?.states || [];
+  const areas = data?.areas || [];
 
-  // ✅ INDIA FIND
-  const india = data?.countries?.find(
-    (c: any) => c.name.toLowerCase() === "india"
+  // INDIA
+  const india = countries.find(
+    (c: any) => c?.name?.toLowerCase() === "india"
   );
 
-  // ✅ INDIA STATES (FIXED 🔥)
-  const indiaStates =
-    data?.states?.filter(
-      (s: any) => s.country === india?._id
-    ) || [];
+  const indiaStates = states.filter(
+    (s: any) => s?.country === india?._id
+  );
 
-  // ✅ WORLD COUNTRIES
-  const worldCountries =
-    data?.countries?.filter(
-      (c: any) => c.name.toLowerCase() !== "india"
-    ) || [];
+  const worldCountries = countries.filter(
+    (c: any) => c?.name?.toLowerCase() !== "india"
+  );
 
-  // ✅ STATES BY COUNTRY (FIXED 🔥)
+  // STATES GROUP
   const statesByCountry: Record<string, any[]> = {};
-  data?.states?.forEach((state: any) => {
-    const countryId = state.country; // ✅ direct id
-
-    if (!countryId) return;
-
-    if (!statesByCountry[countryId]) {
-      statesByCountry[countryId] = [];
-    }
-
-    statesByCountry[countryId].push(state);
+  states.forEach((s: any) => {
+    if (!s?.country) return;
+    if (!statesByCountry[s.country]) statesByCountry[s.country] = [];
+    statesByCountry[s.country].push(s);
   });
 
-  // ✅ 🔥 AREAS BY STATE (NEW ADD - MOST IMPORTANT)
+  // AREAS GROUP
   const areasByState: Record<string, any[]> = {};
-  data?.areas?.forEach((area: any) => {
-    const stateId = area.state; // ✅ direct id
-
-    if (!stateId) return;
-
-    if (!areasByState[stateId]) {
-      areasByState[stateId] = [];
-    }
-
-    areasByState[stateId].push(area);
+  areas.forEach((a: any) => {
+    if (!a?.state) return;
+    if (!areasByState[a.state]) areasByState[a.state] = [];
+    areasByState[a.state].push(a);
   });
 
   return (
@@ -62,9 +51,9 @@ export default async function Navbar() {
       indiaStates={indiaStates}
       worldCountries={worldCountries}
       statesByCountry={statesByCountry}
-      areasByState={areasByState} // ✅ MUST PASS
-      customCategories={customCategories}
-      specialTours={specialTours}
+      areasByState={areasByState}
+      customCategories={customCategories || []}
+      specialTours={specialTours || []}
     />
   );
 }

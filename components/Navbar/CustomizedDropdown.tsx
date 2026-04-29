@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 interface Category {
   _id: string;
   title: string;
@@ -11,6 +13,12 @@ interface Props {
 }
 
 export default function CustomizedDropdown({ categories = [] }: Props) {
+  const router = useRouter();
+
+  const handleClick = (category: string) => {
+    router.push(`/tours?category=${category.toLowerCase()}`);
+  };
+
   return (
     <div className="absolute left-0 top-full w-[280px] bg-white shadow-2xl rounded-lg p-4 z-50">
 
@@ -25,6 +33,7 @@ export default function CustomizedDropdown({ categories = [] }: Props) {
           categories.map((item) => (
             <div
               key={item._id}
+              onClick={() => handleClick(item.title)}  // ✅ CLICK ENABLED
               className="flex items-center gap-3 p-2 rounded-md cursor-pointer hover:bg-blue-50 transition-all"
             >
               {/* ICON */}

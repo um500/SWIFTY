@@ -40,7 +40,6 @@ export default defineType({
       name: "shortDescription",
       title: "Short Description",
       type: "string",
-      description: "Used in cards / preview UI",
       validation: (Rule) => Rule.max(120),
     }),
 
@@ -83,11 +82,13 @@ export default defineType({
       hidden: ({ document }) => !(document as any)?.country,
     }),
 
+    // 🔥 FIX: AREA REQUIRED KARO
     defineField({
       name: "area",
       title: "Select Area",
       type: "reference",
       to: [{ type: "area" }],
+      validation: (Rule) => Rule.required(), // ✅ ADD THIS
 
       options: {
         filter: ({ document }) => {
@@ -137,7 +138,6 @@ export default defineType({
       initialValue: false,
     }),
 
-    // 🔥 NEW: FEATURE CARD SECTION CONTROL
     defineField({
       name: "sections",
       title: "Show in Feature Sections",
@@ -154,11 +154,9 @@ export default defineType({
           },
         },
       ],
-      description: "Select where this tour should appear",
     }),
   ],
 
-  // ================= PREVIEW =================
   preview: {
     select: {
       title: "title",
