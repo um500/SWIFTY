@@ -2,7 +2,7 @@ import { country } from "./country";
 import { state } from "./state";
 import { area } from "./area"; // ✅ FIXED
 import tour from "./tour";
-import category from "./category";
+import SpecialTour from "./category";
 import customizedCategory from "./customizedCategory";
 import homeBanner from "./homeBanner";
 import homeSection from "./homeSection";
@@ -20,7 +20,7 @@ export const schemaTypes = [
   state,
   area, 
   tour,
-  category,
+  SpecialTour,
   customizedCategory,
    homeBanner,
     homeSection,

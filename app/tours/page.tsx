@@ -82,12 +82,11 @@ import ToursClient from "@/components/tours/ToursClient";
 export default async function ToursPage({ searchParams }: any) {
   const resolvedParams = await searchParams;
 
-  // ?city=kolkata  → area slug (from navbar area links)
-  // ?state=west-bengal → state slug
-  // ?country=india → country slug
-  const areaSlug    = resolvedParams?.city    ?? "";
-  const stateSlug   = resolvedParams?.state   ?? "";
-  const countrySlug = resolvedParams?.country ?? "";
+  const areaSlug    = resolvedParams?.city     ?? "";
+  const stateSlug   = resolvedParams?.state    ?? "";
+  const countrySlug = resolvedParams?.country  ?? "";
+  const specialSlug = resolvedParams?.special  ?? "";
+  const customSlug  = resolvedParams?.custom   ?? "";
 
   const tours = await client.fetch(
     TOURS_LISTING_QUERY,
@@ -97,11 +96,19 @@ export default async function ToursPage({ searchParams }: any) {
 
   const safeTours = Array.isArray(tours) ? tours : [];
 
-  // Human-readable label: "kolkata" → "Kolkata"
-  const rawLabel = areaSlug || stateSlug || countrySlug;
-  const filterLabel = rawLabel
-    ? rawLabel.replace(/-/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase())
-    : "";
+  // Build human-readable label
+  // Priority: special > custom > city > state > country
+  let filterLabel = "";
+  if (specialSlug) {
+    filterLabel = specialSlug.replace(/-/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
+  } else if (customSlug) {
+    filterLabel = customSlug.replace(/-/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
+  } else {
+    const rawLabel = areaSlug || stateSlug || countrySlug;
+    filterLabel = rawLabel
+      ? rawLabel.replace(/-/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase())
+      : "";
+  }
 
   return (
     <div className="min-h-screen bg-[#f5f5f5]">
@@ -111,6 +118,8 @@ export default async function ToursPage({ searchParams }: any) {
         areaSlug={areaSlug}
         stateSlug={stateSlug}
         countrySlug={countrySlug}
+        specialSlug={specialSlug}
+        customSlug={customSlug}
       />
     </div>
   );

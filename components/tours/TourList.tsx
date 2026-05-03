@@ -2,19 +2,29 @@
 
 import TourCard from "./TourCard";
 
-interface Tour {
+export interface Tour {
   _id: string;
   title: string;
-  slug: { current: string };
-  price: number;
-  duration: number;
+  slug: string;
+  price?: number;
+  days?: number;
   rating?: number;
-  image: string;
-  category?: { name: string };
-  state?: { name: string };
+  image?: string;
+  images?: string[];
+  state?: string;
+  country?: string;
+  highlights?: string[];
+  groupType?: string;
+  tourCode?: string;
 }
 
-export default function TourList({ tours }: { tours: Tour[] }) {
+export default function TourList({
+  tours,
+  view = "list",
+}: {
+  tours: Tour[];
+  view?: "list" | "grid";
+}) {
   // ❌ No data
   if (!tours || tours.length === 0) {
     return (
@@ -31,7 +41,6 @@ export default function TourList({ tours }: { tours: Tour[] }) {
 
   return (
     <div className="space-y-6">
-
       {/* 🔹 RESULT COUNT */}
       <div className="flex justify-between items-center">
         <p className="text-sm text-gray-600">
@@ -40,10 +49,19 @@ export default function TourList({ tours }: { tours: Tour[] }) {
       </div>
 
       {/* 🔹 TOUR CARDS */}
-      {tours.map((tour) => (
-        <TourCard key={tour._id} tour={tour} />
-      ))}
-
+      {view === "grid" ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {tours.map((tour) => (
+            <TourCard key={tour._id} tour={tour} view="grid" />
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-5">
+          {tours.map((tour) => (
+            <TourCard key={tour._id} tour={tour} view="list" />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

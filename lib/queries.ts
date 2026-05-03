@@ -23,26 +23,21 @@ export const SPECIAL_TOURS_QUERY = `
 *[_type == "category"] | order(title asc){
   _id,
   title,
-
-  "count": count(*[
-    _type == "tour" &&
-    references(^._id)
-  ]),
-
+  "slug": slug.current,
+  "count": count(*[_type == "tour" && references(^._id)]),
   "images": images[].asset->url
 }
 `;
-
 
 // ================= CUSTOMIZED CATEGORY WITH TOURS =================
 export const CUSTOMIZED_WITH_TOURS_QUERY = `
 *[_type == "customizedCategory"] | order(title asc){
   _id,
   title,
+  "slug": slug.current,
   "icon": icon.asset->url
 }
 `;
-
 
 // ================= SINGLE CATEGORY PAGE =================
 export const SINGLE_CUSTOMIZED_QUERY = `
@@ -69,7 +64,6 @@ export const SINGLE_CUSTOMIZED_QUERY = `
 }
 `;
 
-
 export const homeBannerQuery = `
   *[_type == "homeBanner" && defined(tour)][0..2]{
     tour->{
@@ -80,7 +74,6 @@ export const homeBannerQuery = `
     }
   }
 `;
-
 
 export const destinationQuery = `*[_type == "state"]{
   name,
@@ -93,8 +86,6 @@ export const destinationQuery = `*[_type == "state"]{
   "tours": count(*[_type == "tour" && references(^._id)])
 }`;
 
-
-
 export const homeSelectedToursQuery = `*[_type == "homeSection"][0]{
   title,
   tours[]->{
@@ -106,7 +97,6 @@ export const homeSelectedToursQuery = `*[_type == "homeSection"][0]{
   }
 }`;
 
-
 export const featuredBannersQuery = `
 *[_type == "featuredBanner"] | order(order asc) {
   title,
@@ -117,7 +107,6 @@ export const featuredBannersQuery = `
   "slug": tour->slug.current
 }
 `;
-
 
 export const TRAVELLING_NOW_QUERY = `
 *[_type == "travellingNow"][0]{
@@ -149,7 +138,6 @@ export const TRAVELLING_NOW_QUERY = `
     ])
   },
 
-  // ✅ LOCAL REVIEWS (from same document)
   reviews[]{
     name,
     text,
@@ -158,7 +146,6 @@ export const TRAVELLING_NOW_QUERY = `
   }
 }
 `;
-
 
 // ================= FEATURE CARDS QUERY =================
 export const FEATURE_CARDS_QUERY = `
@@ -176,7 +163,7 @@ export const FEATURE_CARDS_QUERY = `
 }
 `;
 
-// ================= COUNTRY FAV QUERY (FIXED) =================
+// ================= COUNTRY FAV QUERY =================
 export const COUNTRY_FAV_QUERY = `
 *[_type == "countryFav"]{
   title,
@@ -198,9 +185,7 @@ export const COUNTRY_FAV_QUERY = `
 }
 `;
 
-
-
-// ================= POPULAR TOURS QUERY (FIXED) =================
+// ================= POPULAR TOURS QUERY =================
 export const POPULAR_TOURS_QUERY = `
 *[_type == "popularTours"]{
   title,
@@ -221,7 +206,6 @@ export const POPULAR_TOURS_QUERY = `
 }
 `;
 
-
 export const reviewsQuery = `
   *[_type == "review" && isActive == true] | order(_createdAt desc) {
     _id,
@@ -236,7 +220,6 @@ export const reviewsQuery = `
   }
 `;
 
-
 // ================= BLOG LIST =================
 export const BLOGS_QUERY = `
 *[_type == "blog"] | order(_createdAt desc){
@@ -248,7 +231,6 @@ export const BLOGS_QUERY = `
   "thumbnail": coalesce(thumbnail.asset->url, "")
 }
 `;
-
 
 // ================= SINGLE BLOG =================
 export const SINGLE_BLOG_QUERY = `
@@ -277,7 +259,7 @@ export const SINGLE_BLOG_QUERY = `
 }
 `;
 
-// ALL TOURS
+// ================= ALL TOURS =================
 export const allToursQuery = `*[_type == "tour"]{
   _id,
   title,
@@ -291,7 +273,7 @@ export const allToursQuery = `*[_type == "tour"]{
   country->{name}
 }`;
 
-// CATEGORY FILTER
+// ================= CATEGORY FILTER =================
 export const TOURS_BY_CATEGORY = `
 *[_type=="tour" && category == $category]{
   _id,
@@ -301,7 +283,6 @@ export const TOURS_BY_CATEGORY = `
   duration
 }
 `;
-
 
 export const TOURS_QUERY = `*[_type == "tour"]{
   _id,
@@ -320,19 +301,27 @@ export const TOURS_QUERY = `*[_type == "tour"]{
 export const TOURS_LISTING_QUERY = `
 *[
   _type == "tour"
-  && ($stateSlug == "" || state->slug.current == $stateSlug)
+  && ($stateSlug   == "" || state->slug.current   == $stateSlug)
   && ($countrySlug == "" || country->slug.current == $countrySlug)
-  && ($areaSlug == "" || references(*[_type=="area" && slug.current==$areaSlug]._id))
+  && ($areaSlug    == "" || references(*[_type=="area" && slug.current==$areaSlug]._id))
 ] | order(_createdAt desc) {
   _id,
   title,
   "slug": slug.current,
   price,
   days,
-  "image": images[0].asset->url,
-  "state": state->name,
-  "stateSlug": state->slug.current,
-  "country": country->name,
-  "countrySlug": country->slug.current
+  rating,
+  "image":   images[0].asset->url,
+  "images":  images[].asset->url,
+
+  "state":       state->name,
+  "stateSlug":   state->slug.current,
+  "country":     country->name,
+  "countrySlug": country->slug.current,
+  "area":        area->name,
+  "areaSlug":    area->slug.current,
+
+  "categories":           categories[]->{_id, "name": title},
+  "customizedCategories": customizedCategories[]->{_id, "name": title}
 }
 `;

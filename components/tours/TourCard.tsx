@@ -1,104 +1,16 @@
-// import Link from "next/link";
-
-// export default function TourCard({ tour }: any) {
-//   return (
-//     <div className="flex flex-col md:flex-row bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 overflow-hidden">
-
-//       {/* IMAGE */}
-//       <div className="relative md:w-72 h-52 md:h-auto">
-//         <img
-//           src={tour.image}
-//           alt={tour.title}
-//           className="w-full h-full object-cover"
-//         />
-
-//         {/* ❤️ Wishlist icon */}
-//         <div className="absolute top-3 right-3 bg-white p-2 rounded-full shadow">
-//           ❤️
-//         </div>
-//       </div>
-
-//       {/* CENTER CONTENT */}
-//       <div className="flex-1 p-5 flex flex-col justify-between">
-
-//         <div>
-//           {/* TITLE */}
-//           <h2 className="text-xl font-semibold text-gray-900">
-//             {tour.title}
-//           </h2>
-
-//           {/* ⭐ RATING */}
-//           <div className="flex items-center gap-2 mt-1 text-sm text-gray-600">
-//             ⭐⭐⭐⭐⭐
-//             <span>4.5 Reviews</span>
-//           </div>
-
-//           {/* ALL INCLUSIVE */}
-//           <p className="text-blue-600 text-sm mt-2">
-//             🔗 All Inclusive
-//           </p>
-
-//           {/* DETAILS */}
-//           <div className="flex gap-4 mt-3 text-sm text-gray-700">
-//             {tour.days && <span><b>{tour.days}</b> Days</span>}
-//             <span>4 Cities</span>
-//             <span>2 Dates</span>
-//           </div>
-
-//           {/* DESCRIPTION */}
-//           <p className="text-gray-500 text-sm mt-2">
-//             Experience the best of {tour.title} with guided tours...
-//           </p>
-
-//           {/* LOCATION */}
-//           <p className="text-sm text-gray-500 mt-2">
-//             📍 {tour.country}
-//           </p>
-//         </div>
-//       </div>
-
-//       {/* RIGHT SIDE PRICE */}
-//       <div className="md:w-64 bg-gray-50 p-5 flex flex-col justify-between border-l">
-
-//         <div>
-//           <p className="text-sm text-gray-500">Starts from</p>
-
-//           <p className="text-2xl font-bold text-gray-900">
-//             ₹ {tour.price?.toLocaleString("en-IN")}
-//           </p>
-
-//           <p className="text-xs text-gray-500 mt-1">
-//             per person on twin sharing
-//           </p>
-
-//           <p className="text-xs text-gray-400 mt-1">
-//             EMI from ₹1000/mo
-//           </p>
-//         </div>
-
-//         {/* BUTTONS */}
-//         <div className="mt-4 space-y-2">
-//           <button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black py-2 rounded-lg font-semibold transition">
-//             Book Online
-//           </button>
-
-//           <Link href={`/tours/${tour.slug?.current}`}>
-//             <button className="w-full border border-gray-300 py-2 rounded-lg text-sm hover:bg-gray-200 transition">
-//               View Tour Details
-//             </button>
-//           </Link>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-
 "use client";
 
 import Link from "next/link";
-import { Heart, Star, Clock, MapPin, Users, Zap, ChevronRight } from "lucide-react";
 import { useState } from "react";
+import {
+  Heart,
+  Star,
+  Clock,
+  MapPin,
+  Users,
+  Zap,
+  ChevronRight,
+} from "lucide-react";
 
 export interface Tour {
   _id: string;
@@ -120,7 +32,6 @@ export interface Tour {
 function ListCard({ tour }: { tour: Tour }) {
   const [liked, setLiked] = useState(false);
 
-  // Deterministic-ish numbers based on title length
   const seed = tour.title.length;
   const reviewCount = (seed % 30) + 5;
   const cityCount = (seed % 5) + 2;
@@ -129,7 +40,6 @@ function ListCard({ tour }: { tour: Tour }) {
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col sm:flex-row">
-
       {/* IMAGE */}
       <div className="relative sm:w-[230px] sm:min-w-[230px] h-[200px] sm:h-auto overflow-hidden group/img">
         {tour.image ? (
@@ -158,25 +68,13 @@ function ListCard({ tour }: { tour: Tour }) {
           />
         </button>
 
-        {/* Tags */}
-        <div className="absolute top-3 left-3 flex flex-col gap-1 z-10">
-          <span className="bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow">
-            GROUP TOUR
-          </span>
-          {tour.groupType && (
-            <span className="bg-white/90 text-gray-700 text-[10px] font-semibold px-2 py-0.5 rounded shadow">
-              {tour.groupType}
-            </span>
-          )}
-        </div>
+        
       </div>
 
       {/* CONTENT */}
       <div className="flex-1 flex flex-col sm:flex-row min-w-0">
-
         {/* MIDDLE */}
         <div className="flex-1 p-4 min-w-0">
-
           {/* Title */}
           <Link href={`/tours/${tour.slug}`}>
             <h3 className="font-bold text-gray-900 text-[15px] leading-snug hover:text-blue-600 transition-colors line-clamp-2 cursor-pointer">
@@ -207,7 +105,9 @@ function ListCard({ tour }: { tour: Tour }) {
             <div className="w-4 h-4 rounded-full bg-teal-500 flex items-center justify-center">
               <Zap size={9} className="text-white" />
             </div>
-            <span className="text-xs text-teal-600 font-semibold">All Inclusive</span>
+            <span className="text-xs text-teal-600 font-semibold">
+              All Inclusive
+            </span>
           </div>
 
           {/* Meta row */}
@@ -218,16 +118,7 @@ function ListCard({ tour }: { tour: Tour }) {
                 {tour.days} Days
               </span>
             )}
-            <span className="flex items-center gap-1 text-xs text-gray-500">
-              <MapPin size={11} className="text-gray-400" />
-              {cityCount} Cities
-            </span>
-            <Link
-              href={`/tours/${tour.slug}`}
-              className="text-xs text-blue-500 font-semibold hover:underline flex items-center gap-0.5"
-            >
-              {dateCount} Dates <ChevronRight size={11} />
-            </Link>
+            
           </div>
 
           {/* Highlights */}
@@ -266,14 +157,7 @@ function ListCard({ tour }: { tour: Tour }) {
             <p className="text-[10px] text-gray-400 mt-0.5 leading-tight">
               per person on twin sharing
             </p>
-            {emi && (
-              <p className="text-[11px] text-gray-500 mt-1.5">
-                EMI from{" "}
-                <span className="font-bold text-gray-700">
-                  ₹{emi.toLocaleString("en-IN")}/mo
-                </span>
-              </p>
-            )}
+           
           </div>
 
           <div className="mt-4 space-y-2">
@@ -289,15 +173,7 @@ function ListCard({ tour }: { tour: Tour }) {
             >
               View Details
             </Link>
-            <div className="flex items-center justify-center gap-2 pt-1">
-              <button className="text-[11px] text-gray-400 hover:text-gray-700 flex items-center gap-1 transition-colors">
-                <Users size={11} /> Compare
-              </button>
-              <span className="text-gray-200 text-xs">|</span>
-              <button className="text-[11px] text-gray-400 hover:text-gray-700 transition-colors">
-                Enquire
-              </button>
-            </div>
+            
           </div>
         </div>
       </div>
