@@ -263,24 +263,24 @@ export const SINGLE_BLOG_QUERY = `
 export const allToursQuery = `*[_type == "tour"]{
   _id,
   title,
-  slug,
+  "slug": slug.current,
   price,
-  duration,
+  "duration": coalesce(duration, days),
   rating,
-  "image": mainImage.asset->url,
-  category->{name, slug},
+  "image": coalesce(mainImage.asset->url, images[0].asset->url),
+  category->{name},
   state->{name},
   country->{name}
 }`;
 
 // ================= CATEGORY FILTER =================
 export const TOURS_BY_CATEGORY = `
-*[_type=="tour" && category == $category]{
+*[_type=="tour" && references($category)]{
   _id,
   title,
-  "image": image.asset->url,
+  "image": coalesce(mainImage.asset->url, images[0].asset->url),
   price,
-  duration
+  "duration": coalesce(duration, days)
 }
 `;
 
