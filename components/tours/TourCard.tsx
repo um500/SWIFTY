@@ -1,16 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import {
-  Heart,
   Star,
   Clock,
   MapPin,
-  Users,
   Zap,
-  ChevronRight,
 } from "lucide-react";
+import { useWishlist } from "@/lib/useWishlist";
 
 export interface Tour {
   _id: string;
@@ -30,13 +27,21 @@ export interface Tour {
 
 // ─── LIST CARD ───────────────────────────────────────────────────────────────
 function ListCard({ tour }: { tour: Tour }) {
-  const [liked, setLiked] = useState(false);
+  const { isWishlisted, toggle } = useWishlist();
+  const active = isWishlisted(tour._id);
 
   const seed = tour.title.length;
   const reviewCount = (seed % 30) + 5;
-  const cityCount = (seed % 5) + 2;
-  const dateCount = (seed % 15) + 6;
-  const emi = tour.price ? Math.round(tour.price / 10.34) : null;
+
+  const wishlistPayload = {
+    _id: tour._id,
+    title: tour.title,
+    slug: tour.slug,
+    price: tour.price ?? 0,
+    days: tour.days,
+    image: tour.image,
+    location: [tour.state, tour.country].filter(Boolean).join(", "),
+  };
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col sm:flex-row">
@@ -54,21 +59,32 @@ function ListCard({ tour }: { tour: Tour }) {
           </div>
         )}
 
-        {/* Wishlist */}
+        {/* Wishlist Heart */}
         <button
           onClick={(e) => {
             e.preventDefault();
-            setLiked(!liked);
+            e.stopPropagation();
+            toggle(wishlistPayload);
           }}
-          className="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm hover:scale-110 transition-transform z-10"
+          aria-label={active ? "Remove from wishlist" : "Add to wishlist"}
+          className={`
+            absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center
+            shadow-sm transition-all duration-200 active:scale-90 z-10
+            ${active ? "bg-red-500" : "bg-white/90 backdrop-blur-sm hover:scale-110"}
+          `}
         >
-          <Heart
-            size={15}
-            className={liked ? "fill-red-500 text-red-500" : "text-gray-400"}
-          />
+          <svg
+            width="15" height="15"
+            viewBox="0 0 24 24"
+            fill={active ? "white" : "none"}
+            stroke={active ? "none" : "#9ca3af"}
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
         </button>
-
-        
       </div>
 
       {/* CONTENT */}
@@ -118,7 +134,6 @@ function ListCard({ tour }: { tour: Tour }) {
                 {tour.days} Days
               </span>
             )}
-            
           </div>
 
           {/* Highlights */}
@@ -157,7 +172,6 @@ function ListCard({ tour }: { tour: Tour }) {
             <p className="text-[10px] text-gray-400 mt-0.5 leading-tight">
               per person on twin sharing
             </p>
-           
           </div>
 
           <div className="mt-4 space-y-2">
@@ -173,7 +187,6 @@ function ListCard({ tour }: { tour: Tour }) {
             >
               View Details
             </Link>
-            
           </div>
         </div>
       </div>
@@ -183,9 +196,21 @@ function ListCard({ tour }: { tour: Tour }) {
 
 // ─── GRID CARD ───────────────────────────────────────────────────────────────
 function GridCard({ tour }: { tour: Tour }) {
-  const [liked, setLiked] = useState(false);
+  const { isWishlisted, toggle } = useWishlist();
+  const active = isWishlisted(tour._id);
+
   const seed = tour.title.length;
   const reviewCount = (seed % 30) + 5;
+
+  const wishlistPayload = {
+    _id: tour._id,
+    title: tour.title,
+    slug: tour.slug,
+    price: tour.price ?? 0,
+    days: tour.days,
+    image: tour.image,
+    location: [tour.state, tour.country].filter(Boolean).join(", "),
+  };
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 group">
@@ -202,18 +227,34 @@ function GridCard({ tour }: { tour: Tour }) {
             <MapPin size={32} className="text-gray-400" />
           </div>
         )}
+
+        {/* Wishlist Heart */}
         <button
           onClick={(e) => {
             e.preventDefault();
-            setLiked(!liked);
+            e.stopPropagation();
+            toggle(wishlistPayload);
           }}
-          className="absolute top-3 right-3 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow-sm hover:scale-110 transition-transform"
+          aria-label={active ? "Remove from wishlist" : "Add to wishlist"}
+          className={`
+            absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center
+            shadow-sm transition-all duration-200 active:scale-90
+            ${active ? "bg-red-500" : "bg-white/90 hover:scale-110"}
+          `}
         >
-          <Heart
-            size={15}
-            className={liked ? "fill-red-500 text-red-500" : "text-gray-400"}
-          />
+          <svg
+            width="15" height="15"
+            viewBox="0 0 24 24"
+            fill={active ? "white" : "none"}
+            stroke={active ? "none" : "#9ca3af"}
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
         </button>
+
         {tour.days && (
           <div className="absolute bottom-3 left-3 bg-black/60 text-white text-[11px] font-semibold px-2 py-1 rounded-lg backdrop-blur-sm flex items-center gap-1">
             <Clock size={10} /> {tour.days} Days

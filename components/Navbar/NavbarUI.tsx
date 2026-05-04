@@ -528,7 +528,6 @@
 //   );
 // }
 
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -563,8 +562,6 @@ export default function NavbarUI({
   const toggle = (key: string) =>
     setOpenMenu((prev: any) => ({ ...prev, [key]: !prev[key] }));
 
-  // ── URL builders ────────────────────────────────────────────────
-  // area click → pass city + state so FilterSidebar auto-selects both
   const areaHref = (area: any, state?: any) => {
     const areaSlug  = area.slug?.current ?? area.slug ?? "";
     const stateSlug = state?.slug?.current ?? state?.slug ?? "";
@@ -584,6 +581,30 @@ export default function NavbarUI({
     return `/tours?country=${slug}`;
   };
 
+  useEffect(() => {
+  const getCount = () => {
+    try {
+      const data = localStorage.getItem("wishlist");
+      const parsed = data ? JSON.parse(data) : [];
+      setFavCount(parsed.length);
+    } catch {
+      setFavCount(0);
+    }
+  };
+
+  // initial load
+  getCount();
+
+  // 🔥 sync with other pages
+  window.addEventListener("wishlistUpdated", getCount);
+  window.addEventListener("storage", getCount);
+
+  return () => {
+    window.removeEventListener("wishlistUpdated", getCount);
+    window.removeEventListener("storage", getCount);
+  };
+}, []);
+
   return (
     <div className="sticky top-0 z-50 bg-gradient-to-r from-[#0f172a] to-[#1e293b] text-white font-serif">
 
@@ -601,7 +622,7 @@ export default function NavbarUI({
           </Link>
         </div>
 
-        {/* SEARCH */}
+        {/* SEARCH — desktop */}
         <div className="hidden xl:flex items-center bg-white rounded-full px-4 py-2 w-[450px]">
           <Search size={16} className="text-gray-500" />
           <input
@@ -656,7 +677,6 @@ export default function NavbarUI({
           onMouseEnter={() => { setActiveMenu("india"); setSelectedState(null); }}
           onMouseLeave={() => setActiveMenu(null)}
         >
-          {/* "India" label — clickable → all India tours */}
           <Link
             href="/tours?country=india"
             className="flex items-center gap-1 hover:text-yellow-300 py-2 transition-colors"
@@ -666,24 +686,16 @@ export default function NavbarUI({
 
           {activeMenu === "india" && (
             <>
-              {/* hover bridge — prevents gap between label and dropdown */}
               <div className="absolute left-0 top-full h-3 w-full" />
-
               <div className="absolute left-0 top-full flex bg-white text-black shadow-2xl rounded-xl z-50 overflow-hidden">
 
-                {/* STATES column */}
                 <div className="w-[240px] border-r bg-gray-50 py-2">
                   {indiaStates.map((s: any) => (
-                    <div
-                      key={s._id}
-                      onMouseEnter={() => setSelectedState(s)}
-                      className="group"
-                    >
-                      {/* State name is a link */}
+                    <div key={s._id} onMouseEnter={() => setSelectedState(s)} className="group">
                       <Link
                         href={stateHref(s)}
-                        className="flex items-center justify-between px-5 py-2.5 hover:bg-white transition-colors"
                         onClick={() => setActiveMenu(null)}
+                        className="flex items-center justify-between px-5 py-2.5 hover:bg-white transition-colors"
                       >
                         <span className="text-sm text-gray-700 group-hover:text-gray-900 font-medium">
                           {s.name}
@@ -696,10 +708,8 @@ export default function NavbarUI({
                   ))}
                 </div>
 
-                {/* AREAS column — shown on state hover */}
                 {selectedState && (
                   <div className="w-[280px] bg-white py-2">
-                    {/* State heading — also clickable */}
                     <Link
                       href={stateHref(selectedState)}
                       onClick={() => setActiveMenu(null)}
@@ -730,7 +740,6 @@ export default function NavbarUI({
           onMouseEnter={() => { setActiveMenu("world"); setSelectedCountry(null); setSelectedState(null); }}
           onMouseLeave={() => setActiveMenu(null)}
         >
-          {/* "World" label — clickable → all world tours */}
           <Link
             href="/tours"
             className="flex items-center gap-1 hover:text-yellow-300 py-2 transition-colors"
@@ -741,10 +750,8 @@ export default function NavbarUI({
           {activeMenu === "world" && (
             <>
               <div className="absolute left-0 top-full h-3 w-full" />
-
               <div className="absolute left-0 top-full flex bg-white text-black shadow-2xl rounded-xl z-50 overflow-hidden">
 
-                {/* COUNTRIES column */}
                 <div className="w-[240px] bg-gray-50 border-r py-2">
                   {worldCountries.map((c: any) => (
                     <div
@@ -768,7 +775,6 @@ export default function NavbarUI({
                   ))}
                 </div>
 
-                {/* STATES column */}
                 {selectedCountry && (
                   <div className="w-[240px] border-r bg-white py-2">
                     <Link
@@ -779,11 +785,7 @@ export default function NavbarUI({
                       All {selectedCountry.name} Tours →
                     </Link>
                     {(statesByCountry[selectedCountry._id] || []).map((s: any) => (
-                      <div
-                        key={s._id}
-                        onMouseEnter={() => setSelectedState(s)}
-                        className="group"
-                      >
+                      <div key={s._id} onMouseEnter={() => setSelectedState(s)} className="group">
                         <Link
                           href={stateHref(s)}
                           onClick={() => setActiveMenu(null)}
@@ -801,7 +803,6 @@ export default function NavbarUI({
                   </div>
                 )}
 
-                {/* AREAS column */}
                 {selectedState && (
                   <div className="w-[240px] bg-gray-50 py-2">
                     <Link
@@ -865,7 +866,6 @@ export default function NavbarUI({
         <Link href="/blog" className="hover:text-yellow-300 py-2 transition-colors">
           Blog
         </Link>
-
         <Link href="/contact" className="hover:text-yellow-300 py-2 transition-colors">
           Contact Us
         </Link>
@@ -874,11 +874,7 @@ export default function NavbarUI({
       {/* ═══════════════ MOBILE SIDEBAR ═══════════════ */}
       {open && (
         <>
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 bg-black/40 z-40"
-            onClick={() => setOpen(false)}
-          />
+          <div className="fixed inset-0 bg-black/40 z-40" onClick={() => setOpen(false)} />
 
           <div className="fixed top-0 left-0 w-[85%] max-w-sm h-full bg-white text-black z-50 overflow-y-auto shadow-2xl">
 
@@ -898,7 +894,6 @@ export default function NavbarUI({
               {/* ── INDIA ── */}
               <div className="rounded-lg overflow-hidden border border-gray-100">
                 <div className="flex items-center justify-between">
-                  {/* "India" text → link */}
                   <Link
                     href="/tours?country=india"
                     onClick={() => setOpen(false)}
@@ -935,7 +930,6 @@ export default function NavbarUI({
                             </button>
                           )}
                         </div>
-
                         {openMenu[state._id] && (
                           <div className="bg-white border-t border-gray-100">
                             {(areasByState[state._id] || []).map((area: any) => (
@@ -1017,7 +1011,6 @@ export default function NavbarUI({
                                     </button>
                                   )}
                                 </div>
-
                                 {openMenu[state._id] && (
                                   <div className="border-t border-gray-100">
                                     {(areasByState[state._id] || []).map((area: any) => (
@@ -1045,7 +1038,14 @@ export default function NavbarUI({
               {/* ── SPECIALTY TOURS ── */}
               <div className="rounded-lg overflow-hidden border border-gray-100">
                 <div className="flex items-center justify-between">
-                  <span className="flex-1 font-semibold py-3 px-4">Specialty Tours</span>
+                  {/* ✅ Header text is now also a link to all specialty tours */}
+                  <Link
+                    href="/tours?special="
+                    onClick={() => setOpen(false)}
+                    className="flex-1 font-semibold py-3 px-4 hover:text-yellow-600 transition-colors"
+                  >
+                    Specialty Tours
+                  </Link>
                   <button
                     onClick={() => toggle("special")}
                     className="px-4 py-3 text-gray-500 text-lg font-bold hover:bg-gray-50"
@@ -1056,10 +1056,16 @@ export default function NavbarUI({
 
                 {openMenu["special"] && (
                   <div className="bg-gray-50 border-t p-3 space-y-2">
-                    {specialTours?.slice(0, 6).map((t: any) => (
-                      <div
+                    {specialTours?.length === 0 && (
+                      <p className="text-xs text-gray-400 px-2">No specialty tours found</p>
+                    )}
+                    {specialTours?.map((t: any) => (
+                      // ✅ Each item is now a proper Link
+                      <Link
                         key={t._id}
-                        className="flex items-center gap-3 p-2 rounded-lg hover:bg-white transition cursor-pointer"
+                        href={`/tours?special=${t.slug}`}
+                        onClick={() => setOpen(false)}
+                        className="flex items-center gap-3 p-2 rounded-lg hover:bg-white transition"
                       >
                         <div className="w-16 h-12 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
                           {t.images?.[0] ? (
@@ -1077,8 +1083,9 @@ export default function NavbarUI({
                         <div>
                           <p className="text-sm font-medium text-gray-800 leading-tight">{t.title}</p>
                           <p className="text-xs text-gray-400 mt-0.5">{t.count} Departures</p>
+                          <p className="text-xs text-blue-500 mt-0.5">View Tours →</p>
                         </div>
-                      </div>
+                      </Link>
                     ))}
                   </div>
                 )}
@@ -1087,7 +1094,14 @@ export default function NavbarUI({
               {/* ── CUSTOMIZED HOLIDAYS ── */}
               <div className="rounded-lg overflow-hidden border border-gray-100">
                 <div className="flex items-center justify-between">
-                  <span className="flex-1 font-semibold py-3 px-4">Customized Holidays</span>
+                  {/* ✅ Header text is now also a link */}
+                  <Link
+                    href="/tours"
+                    onClick={() => setOpen(false)}
+                    className="flex-1 font-semibold py-3 px-4 hover:text-yellow-600 transition-colors"
+                  >
+                    Customized Holidays
+                  </Link>
                   <button
                     onClick={() => toggle("custom")}
                     className="px-4 py-3 text-gray-500 text-lg font-bold hover:bg-gray-50"
@@ -1098,16 +1112,29 @@ export default function NavbarUI({
 
                 {openMenu["custom"] && (
                   <div className="bg-gray-50 border-t p-3 space-y-1">
+                    {customCategories?.length === 0 && (
+                      <p className="text-xs text-gray-400 px-2">No categories found</p>
+                    )}
                     {customCategories?.map((c: any) => (
-                      <div
+                      // ✅ Each item is now a proper Link
+                      <Link
                         key={c._id}
-                        className="flex items-center gap-3 p-2 rounded-lg hover:bg-white transition cursor-pointer"
+                        href={`/tours?custom=${c.slug}`}
+                        onClick={() => setOpen(false)}
+                        className="flex items-center gap-3 p-2 rounded-lg hover:bg-white transition"
                       >
-                        <div className="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-sm text-sm flex-shrink-0">
-                          ✈️
+                        <div className="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-sm flex-shrink-0">
+                          {c.icon ? (
+                            <img src={c.icon} alt={c.title} className="w-4 h-4 object-contain" />
+                          ) : (
+                            <span style={{ fontSize: "16px" }}>✈️</span>
+                          )}
                         </div>
-                        <span className="text-sm text-gray-700 font-medium">{c.title}</span>
-                      </div>
+                        <div>
+                          <span className="text-sm text-gray-700 font-medium">{c.title}</span>
+                          <p className="text-xs text-blue-500">View Tours →</p>
+                        </div>
+                      </Link>
                     ))}
                   </div>
                 )}
