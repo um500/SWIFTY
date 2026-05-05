@@ -907,14 +907,18 @@ export default function NavbarUI({
 
           <div className="fixed top-0 left-0 w-[85%] max-w-sm h-full bg-white text-black z-50 overflow-y-auto shadow-2xl">
             {/* Top bar */}
-            <div className="flex items-center justify-between px-4 py-3 border-b bg-white">
+            <div className="flex items-center justify-between px-4 py-3 border-b bg-[#0B1E3C]">
               {/* Logo */}
-              <Link href="/" onClick={() => setOpen(false)}>
+              <Link
+                href="/"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2"
+              >
                 <Image
-                  src="/logo.png"
+                  src="/logo1.png"
                   alt="Swasti Tours"
                   width={140}
-                  height={50}
+                  height={40}
                   className="object-contain h-10 w-auto"
                   priority
                 />
@@ -922,7 +926,10 @@ export default function NavbarUI({
 
               {/* Close Button */}
               <button onClick={() => setOpen(false)}>
-                <X className="w-5 h-5" />
+                <X
+                  size={22}
+                  className="text-white hover:text-gray-300 transition"
+                />
               </button>
             </div>
 
