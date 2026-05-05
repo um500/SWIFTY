@@ -4,17 +4,24 @@
 
 // ================= MENU QUERY =================
 export const MENU_QUERY = `{
-  "countries": *[_type == "country"]{_id, name},
-  "states": *[_type == "state"]{
+  "countries": *[_type == "country"] | order(name asc){
     _id,
     name,
-    "country": country->_id
+    "slug": slug.current
   },
-  "areas": *[_type == "area"]{
+  "states": *[_type == "state"] | order(name asc){
     _id,
     name,
     "slug": slug.current,
-    "state": state->_id
+    "country": country->_id,
+    "countrySlug": country->slug.current
+  },
+  "areas": *[_type == "area"] | order(name asc){
+    _id,
+    name,
+    "slug": slug.current,
+    "state": state->_id,
+    "stateSlug": state->slug.current
   }
 }`;
 
@@ -49,23 +56,32 @@ export const SINGLE_CUSTOMIZED_QUERY = `*[_type == "customizedCategory" && slug.
   }
 }`;
 
-export const homeBannerQuery = `*[_type == "homeBanner" && defined(tour)][0..2]{
-  tour->{
-    title,
-    price,
-    days,
-    "slug": slug.current
+// ================= HOME BANNER =================
+export const homeBannerQuery = `
+  *[_type == "homeBanner" && defined(tour) && defined(tour->slug.current)]
+  | order(_createdAt desc)[0...3]{
+    _id,
+    tour->{
+      _id,
+      title,
+      price,
+      days,
+      "slug": slug.current
+    }
   }
-}`;
+`;
 
-export const destinationQuery = `*[_type == "state"]{
+// ================= DESTINATION (STATES) SCROLLER =================
+// Used in DestinationScroller — clicking a state goes to /tours?state=<stateSlug>
+export const destinationQuery = `*[_type == "state"] | order(name asc){
   name,
   "slug": slug.current,
   "image": image.asset->url,
-  country->{ name, "slug": slug.current },
+  "country": country->{ name, "slug": slug.current },
   "tours": count(*[_type == "tour" && references(^._id)])
 }`;
 
+// ================= HOME SELECTED TOURS =================
 export const homeSelectedToursQuery = `*[_type == "homeSection"][0]{
   title,
   tours[]->{
@@ -77,6 +93,7 @@ export const homeSelectedToursQuery = `*[_type == "homeSection"][0]{
   }
 }`;
 
+// ================= FEATURED BANNERS =================
 export const featuredBannersQuery = `*[_type == "featuredBanner"] | order(order asc){
   title,
   subtitle,
@@ -86,6 +103,7 @@ export const featuredBannersQuery = `*[_type == "featuredBanner"] | order(order 
   "slug": tour->slug.current
 }`;
 
+// ================= TRAVELLING NOW =================
 export const TRAVELLING_NOW_QUERY = `*[_type == "travellingNow"][0]{
   title,
   description,
@@ -104,8 +122,8 @@ export const TRAVELLING_NOW_QUERY = `*[_type == "travellingNow"][0]{
     "tourCount": count(*[
       _type == "tour" &&
       (
-        (type == "india" && references(^.state._ref)) ||
-        (type == "international" && references(^.country._ref))
+        (^.type == "india" && references(^.state._ref)) ||
+        (^.type == "international" && references(^.country._ref))
       )
     ])
   },
@@ -122,6 +140,7 @@ export const FEATURE_CARDS_QUERY = `*[_type == "featureCard"]{
   sections,
   "title": tour->title,
   "price": tour->price,
+  "days": tour->days,
   "slug": tour->slug.current,
   "image": tour->images[0].asset->url,
   "state": tour->state->name,
@@ -129,6 +148,7 @@ export const FEATURE_CARDS_QUERY = `*[_type == "featureCard"]{
 }`;
 
 // ================= COUNTRY FAV QUERY =================
+// Used in CountryPromo — clicking a country goes to /tours?country=<countrySlug>
 export const COUNTRY_FAV_QUERY = `*[_type == "countryFav"]{
   title,
   "countries": countries[]->{
@@ -161,6 +181,7 @@ export const POPULAR_TOURS_QUERY = `*[_type == "popularTours"]{
   }
 }`;
 
+// ================= REVIEWS =================
 export const reviewsQuery = `*[_type == "review" && isActive == true] | order(_createdAt desc){
   _id,
   name,
@@ -204,7 +225,7 @@ export const SINGLE_BLOG_QUERY = `*[_type == "blog" && slug.current == $slug][0]
   }
 }`;
 
-// ================= ALL TOURS =================
+// ================= ALL TOURS (legacy) =================
 export const allToursQuery = `*[_type == "tour"]{
   _id,
   title,
@@ -218,29 +239,9 @@ export const allToursQuery = `*[_type == "tour"]{
   country->{ name }
 }`;
 
-// ================= CATEGORY FILTER =================
-export const TOURS_BY_CATEGORY = `*[_type == "tour" && references($category)]{
-  _id,
-  title,
-  "image": coalesce(mainImage.asset->url, images[0].asset->url),
-  price,
-  "duration": coalesce(duration, days)
-}`;
-
-export const TOURS_QUERY = `*[_type == "tour"]{
-  _id,
-  title,
-  price,
-  duration,
-  category,
-  country,
-  state,
-  city,
-  slug,
-  "image": mainImage.asset->url
-}`;
-
 // ================= TOURS LISTING PAGE =================
+// Filters by slug (from URL params).
+// Pass empty string "" to skip a filter.
 export const TOURS_LISTING_QUERY = `*[
   _type == "tour"
   && ($stateSlug   == "" || state->slug.current   == $stateSlug)
@@ -265,10 +266,7 @@ export const TOURS_LISTING_QUERY = `*[
   "customizedCategories": customizedCategories[]->{_id, "name": title}
 }`;
 
-// ============================================
-// 📁 lib/queries.ts
-// ============================================
-
+// ================= SINGLE TOUR BY SLUG =================
 export const tourBySlugQuery = `*[_type == "tour" && slug.current == $slug][0]{
   _id,
   title,
@@ -346,7 +344,9 @@ export const tourBySlugQuery = `*[_type == "tour" && slug.current == $slug][0]{
   cancellation[]{
     _key,
     days,
-    amount
+    amount,
+    percent,
+    dateRange
   },
 
   pdf{

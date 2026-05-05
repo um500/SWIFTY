@@ -1,5 +1,5 @@
 // ============================================
-// 📁 app/tours/[slug]/page.tsx
+// 📁 app/tour/[slug]/page.tsx
 // Single Tour Details Page — Next.js 15+ App Router
 // ============================================
 
@@ -17,13 +17,17 @@ import PriceCard from "@/components/tours/PriceCard";
 import TourDetails from "@/components/tours/TourDetails";
 import CancellationTable from "@/components/tours/CancellationTable";
 
+// ── Types ──────────────────────────────────────────────────────────────
+
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
 interface CancellationPolicy {
   _key?: string;
+  /** Raw percentage string e.g. "25" or "25%" */
   amount?: string;
+  /** Explicit percent field if schema has it */
   percent?: string;
   days?: string;
   dateRange?: string;
@@ -61,15 +65,28 @@ interface Tour {
   exclusions?: (string | PortableTextBlock[])[];
   preparation?: (string | PortableTextBlock[])[];
   cancellation?: CancellationPolicy[];
-  pdf?: { asset?: { url?: string } }; // ← was missing
+  pdf?: { asset?: { url?: string } };
 }
 
-// ── Inlined Breadcrumb ──
-function Breadcrumb({
-  items,
-}: {
-  items: { label: string; href: string }[];
-}) {
+// ── Helpers ────────────────────────────────────────────────────────────
+
+/** Derive INR amount from a percentage and the tour price */
+function calculateAmount(percent: string, price?: number): string {
+  if (!price || !percent) return "";
+  const value = (parseInt(percent, 10) / 100) * price;
+  return Math.round(value).toLocaleString("en-IN");
+}
+
+/** Extract the numeric percent string from a CancellationPolicy row */
+function resolvePercent(item: CancellationPolicy): string {
+  if (item.percent) return item.percent.replace("%", "");
+  if (item.amount)  return item.amount.replace("%", "");
+  return "0";
+}
+
+// ── Sub-components ─────────────────────────────────────────────────────
+
+function Breadcrumb({ items }: { items: { label: string; href: string }[] }) {
   return (
     <nav aria-label="Breadcrumb" className="text-sm">
       <ol className="flex flex-wrap items-center gap-1.5 text-gray-500">
@@ -98,10 +115,8 @@ function Breadcrumb({
   );
 }
 
-// ── Inlined Highlights ──
 function Highlights({ items }: { items?: string[] }) {
   if (!items?.length) return null;
-
   return (
     <div className="mt-6">
       <div className="flex items-center gap-3 mb-3">
@@ -122,7 +137,6 @@ function Highlights({ items }: { items?: string[] }) {
   );
 }
 
-// ── Not Found UI ──
 function TourNotFound() {
   return (
     <div className="min-h-[60vh] flex items-center justify-center px-4">
@@ -143,17 +157,9 @@ function TourNotFound() {
   );
 }
 
-// ── Calculate deduction amount from percent ──
-function calculateAmount(percent: string, price?: number) {
-  if (!price) return "";
-  const value = (parseInt(percent) / 100) * price;
-  return Math.round(value).toLocaleString("en-IN");
-}
+// ── SEO Metadata ───────────────────────────────────────────────────────
 
-// ── SEO Metadata ──
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   if (!slug) return { title: "Tour Not Found" };
 
@@ -170,48 +176,59 @@ export async function generateMetadata({
   };
 }
 
-// ── Main Page ──
+// ── Main Page ──────────────────────────────────────────────────────────
+
 export default async function TourPage({ params }: PageProps) {
   const { slug } = await params;
   if (!slug) return <TourNotFound />;
 
-  const tour: Tour | null = await client.fetch(tourBySlugQuery, { slug });
+  const tour: Tour | null = await client.fetch(
+    tourBySlugQuery,
+    { slug },
+    { next: { revalidate: 60 } }
+  );
+
   if (!tour) return <TourNotFound />;
 
+  // Location string shown in header
   const location = [tour.area?.name, tour.state?.name, tour.country?.name]
     .filter(Boolean)
     .join(" • ");
 
+  // Breadcrumb — country link uses ?country=<slug> to filter /tours listing
   const breadcrumbItems = [
     { label: "Home", href: "/" },
     { label: "Tours", href: "/tours" },
-    ...(tour.country?.name
-      ? [{ label: tour.country.name, href: `/tours?country=${tour.country?.slug ?? ""}` }]
+    ...(tour.country?.slug
+      ? [
+          {
+            label: tour.country.name ?? tour.country.slug,
+            href: `/tours?country=${tour.country.slug}`,
+          },
+        ]
       : []),
     { label: tour.title, href: "#" },
   ];
 
+  // Build cancellation table data
   const cancellationData =
-    tour?.cancellation
-      ?.map((item: CancellationPolicy) => {
-        const percent =
-          item.percent || item.amount?.replace("%", "") || "0";
-
+    (tour.cancellation ?? [])
+      .map((item: CancellationPolicy) => {
+        const percent = resolvePercent(item);
         return {
-          amount: calculateAmount(percent, tour.price),
           percent,
-          days: item.days,
-          dateRange: item.dateRange || "",
+          amount: calculateAmount(percent, tour.price),
+          days: item.days ?? "",
+          dateRange: item.dateRange ?? "",
         };
       })
-      ?.sort((a, b) => Number(a.percent) - Number(b.percent)) || [];
+      .sort((a, b) => Number(a.percent) - Number(b.percent));
 
-  // ← extract the PDF URL here
   const pdfUrl = tour.pdf?.asset?.url ?? null;
 
   return (
     <main className="bg-gray-50 min-h-screen pb-12">
-      {/* ── BREADCRUMB ── */}
+      {/* BREADCRUMB */}
       <div className="bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <Breadcrumb items={breadcrumbItems} />
@@ -219,19 +236,19 @@ export default async function TourPage({ params }: PageProps) {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-        {/* ── TITLE — mobile only ── */}
+        {/* TITLE — mobile only */}
         <div className="lg:hidden mb-5">
           <h1 className="text-2xl font-bold text-gray-800 leading-tight">
             {tour.title}
           </h1>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm text-gray-500">
-            {tour.days && <span>🗓️ {tour.days}</span>}
-            {location && <span>📍 {location}</span>}
-            {tour.rating && <span>⭐ {tour.rating} / 5</span>}
+            {tour.days    && <span>🗓️ {tour.days}</span>}
+            {location     && <span>📍 {location}</span>}
+            {tour.rating  && <span>⭐ {tour.rating} / 5</span>}
           </div>
         </div>
 
-        {/* ── HERO GRID ── */}
+        {/* HERO GRID */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left: Carousel + Title card + Highlights */}
           <div className="lg:col-span-2 space-y-5">
@@ -243,8 +260,8 @@ export default async function TourPage({ params }: PageProps) {
                 {tour.title}
               </h1>
               <div className="flex flex-wrap items-center gap-x-5 gap-y-1 mt-3 text-sm text-gray-500">
-                {tour.days && <span>🗓️ {tour.days}</span>}
-                {location && <span>📍 {location}</span>}
+                {tour.days   && <span>🗓️ {tour.days}</span>}
+                {location    && <span>📍 {location}</span>}
                 {tour.rating && <span>⭐ {tour.rating} / 5</span>}
               </div>
               {tour.shortDescription && (
@@ -254,7 +271,6 @@ export default async function TourPage({ params }: PageProps) {
               )}
             </div>
 
-            {/* Highlights */}
             <Highlights items={tour.highlights} />
           </div>
 
@@ -265,37 +281,37 @@ export default async function TourPage({ params }: PageProps) {
                 price={tour.price}
                 days={tour.days}
                 title={tour.title}
-                pdfUrl={pdfUrl}  
+                pdfUrl={pdfUrl}
               />
             </div>
           </div>
         </div>
 
-        {/* ── SHORT DESC — mobile only ── */}
+        {/* SHORT DESC — mobile only */}
         {tour.shortDescription && (
           <section className="lg:hidden mt-8 bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
             <p className="leading-7 text-gray-600">{tour.shortDescription}</p>
           </section>
         )}
 
-        {/* ── DAY-WISE ITINERARY ── */}
+        {/* DAY-WISE ITINERARY */}
         <Itinerary data={tour.itinerary ?? []} />
 
-        {/* ── TOUR INFO TABS ── */}
+        {/* TOUR INFO TABS */}
         <TourTabs
           inclusions={tour.inclusions ?? []}
           exclusions={tour.exclusions ?? []}
           preparation={tour.preparation ?? []}
         />
 
-        {/* ── TOUR DETAILS ── */}
+        {/* TOUR DETAILS */}
         <TourDetails
           flights={tour.flights ?? []}
           accommodations={tour.accommodations ?? []}
           reporting={tour.reporting}
         />
 
-        {/* ── CANCELLATION POLICY ── */}
+        {/* CANCELLATION POLICY */}
         {cancellationData.length > 0 && (
           <CancellationTable data={cancellationData} />
         )}

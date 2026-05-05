@@ -1,3 +1,7 @@
+// ============================================
+// 📁 lib/sanity.ts
+// ============================================
+
 import { createClient } from "next-sanity";
 import {
   MENU_QUERY,
@@ -15,9 +19,9 @@ import {
 
 // ================= CLIENT =================
 export const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
-  apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION,
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
+  apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION ?? "2024-01-01",
   useCdn: true,
 });
 
@@ -31,7 +35,7 @@ export const getMenuData = async () => {
   }
 };
 
-// ================= CUSTOMIZED =================
+// ================= CUSTOMIZED CATEGORIES =================
 export const getCustomizedCategories = async () => {
   try {
     return await client.fetch(CUSTOMIZED_WITH_TOURS_QUERY);
@@ -82,10 +86,11 @@ export const getFeatureCards = async () => {
 };
 
 // ================= COUNTRY FAV =================
-export const getCountryFav = async () => {
+// Returns a flat, deduplicated list of countries
+export const getCountryFav = async (): Promise<any[]> => {
   try {
     const data = await client.fetch(COUNTRY_FAV_QUERY);
-    const countries = data.flatMap((item: any) => item?.countries || []);
+    const countries = (data ?? []).flatMap((item: any) => item?.countries ?? []);
     const unique = Array.from(
       new Map(countries.map((c: any) => [c._id, c])).values()
     );
@@ -97,10 +102,10 @@ export const getCountryFav = async () => {
 };
 
 // ================= POPULAR TOURS =================
-export const getPopularTours = async () => {
+export const getPopularTours = async (): Promise<any[]> => {
   try {
     const data = await client.fetch(POPULAR_TOURS_QUERY);
-    return data || [];
+    return data ?? [];
   } catch (error) {
     console.error("PopularTours Fetch Error:", error);
     return [];
@@ -108,37 +113,32 @@ export const getPopularTours = async () => {
 };
 
 // ================= REVIEWS =================
-export const getReviews = async () => {
+export const getReviews = async (): Promise<any[]> => {
   try {
     const data = await client.fetch(reviewsQuery);
-    return data || [];
+    return data ?? [];
   } catch (error) {
     console.error("Reviews Fetch Error:", error);
     return [];
   }
 };
 
-// BLOG LIST
-export const getBlogs = async () => {
+// ================= BLOG LIST =================
+export const getBlogs = async (): Promise<any[]> => {
   try {
     const data = await client.fetch(BLOGS_QUERY);
-    return data || [];
+    return data ?? [];
   } catch (error) {
     console.error("Blogs Fetch Error:", error);
     return [];
   }
 };
 
-// SINGLE BLOG
+// ================= SINGLE BLOG =================
 export const getBlogBySlug = async (slug: string) => {
   try {
-    console.log("Fetching blog:", slug);
-
     const data = await client.fetch(SINGLE_BLOG_QUERY, { slug });
-
-    console.log("Blog Data:", data);
-
-    return data || null;
+    return data ?? null;
   } catch (error) {
     console.error("Single Blog Fetch Error:", error);
     return null;

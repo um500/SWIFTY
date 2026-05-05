@@ -9,9 +9,9 @@ const StudentBanner = () => {
         Discover handpicked travel experiences across India and the world — plan your perfect journey today.
       </p>
 
-      {/* BUTTON */}
+      {/* BUTTON — was /india/all (non-existent), fixed to /tours */}
       <Link
-        href="/india/all"
+        href="/tours"
         className="mt-4 inline-flex items-center justify-center px-6 py-2.5 text-sm font-medium rounded-lg border border-blue-900 text-blue-900 bg-white transition-all duration-200 hover:bg-blue-900 hover:text-white hover:shadow-lg"
       >
         View all Tours →
