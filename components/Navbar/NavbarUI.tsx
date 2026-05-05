@@ -41,7 +41,6 @@
 //     };
 //   }, []);
 
-
 //   const toggle = (key: string) => {
 //     setOpenMenu((prev: any) => ({
 //       ...prev,
@@ -516,8 +515,6 @@
 //                 Contact Us
 //               </Link>
 
-
-
 //             </div>
 
 //           </div>
@@ -536,6 +533,7 @@ import Link from "next/link";
 import { getFavorites } from "@/lib/favorites";
 import SpecialToursDropdown from "./SpecialToursDropdown";
 import CustomizedDropdown from "./CustomizedDropdown";
+import Image from "next/image";
 
 export default function NavbarUI({
   indiaStates,
@@ -563,10 +561,10 @@ export default function NavbarUI({
     setOpenMenu((prev: any) => ({ ...prev, [key]: !prev[key] }));
 
   const areaHref = (area: any, state?: any) => {
-    const areaSlug  = area.slug?.current ?? area.slug ?? "";
+    const areaSlug = area.slug?.current ?? area.slug ?? "";
     const stateSlug = state?.slug?.current ?? state?.slug ?? "";
     const params = new URLSearchParams();
-    if (areaSlug)  params.set("city",  areaSlug);
+    if (areaSlug) params.set("city", areaSlug);
     if (stateSlug) params.set("state", stateSlug);
     return `/tours?${params.toString()}`;
   };
@@ -582,43 +580,48 @@ export default function NavbarUI({
   };
 
   useEffect(() => {
-  const getCount = () => {
-    try {
-      const data = localStorage.getItem("wishlist");
-      const parsed = data ? JSON.parse(data) : [];
-      setFavCount(parsed.length);
-    } catch {
-      setFavCount(0);
-    }
-  };
+    const getCount = () => {
+      try {
+        const data = localStorage.getItem("wishlist");
+        const parsed = data ? JSON.parse(data) : [];
+        setFavCount(parsed.length);
+      } catch {
+        setFavCount(0);
+      }
+    };
 
-  // initial load
-  getCount();
+    // initial load
+    getCount();
 
-  // 🔥 sync with other pages
-  window.addEventListener("wishlistUpdated", getCount);
-  window.addEventListener("storage", getCount);
+    // 🔥 sync with other pages
+    window.addEventListener("wishlistUpdated", getCount);
+    window.addEventListener("storage", getCount);
 
-  return () => {
-    window.removeEventListener("wishlistUpdated", getCount);
-    window.removeEventListener("storage", getCount);
-  };
-}, []);
+    return () => {
+      window.removeEventListener("wishlistUpdated", getCount);
+      window.removeEventListener("storage", getCount);
+    };
+  }, []);
 
   return (
     <div className="sticky top-0 z-50 bg-gradient-to-r from-[#0f172a] to-[#1e293b] text-white font-serif">
-
       {/* ═══════════════ HEADER ═══════════════ */}
       <div className="max-w-7xl mx-auto flex items-center justify-between py-3 px-4">
-
         {/* LEFT — logo */}
         <div className="flex items-center gap-3">
           <button className="xl:hidden" onClick={() => setOpen(true)}>
             <Menu />
           </button>
+
           <Link href="/" className="flex items-center gap-2 font-bold text-lg">
-            <div className="w-6 h-6 bg-yellow-400 rounded-sm" />
-            <span className="hidden sm:block">Swasti Tours</span>
+            <Image
+              src="/logo1.png"
+              alt="Swasti Tours"
+              width={140}
+              height={40}
+              className="object-contain h-10 w-auto"
+              priority
+            />
           </Link>
         </div>
 
@@ -670,11 +673,13 @@ export default function NavbarUI({
 
       {/* ═══════════════ DESKTOP NAV ═══════════════ */}
       <div className="hidden xl:flex items-center justify-center flex-nowrap gap-8 px-6 py-1 font-medium relative whitespace-nowrap">
-
         {/* ── INDIA ── */}
         <div
           className="relative"
-          onMouseEnter={() => { setActiveMenu("india"); setSelectedState(null); }}
+          onMouseEnter={() => {
+            setActiveMenu("india");
+            setSelectedState(null);
+          }}
           onMouseLeave={() => setActiveMenu(null)}
         >
           <Link
@@ -688,10 +693,13 @@ export default function NavbarUI({
             <>
               <div className="absolute left-0 top-full h-3 w-full" />
               <div className="absolute left-0 top-full flex bg-white text-black shadow-2xl rounded-xl z-50 overflow-hidden">
-
                 <div className="w-[240px] border-r bg-gray-50 py-2">
                   {indiaStates.map((s: any) => (
-                    <div key={s._id} onMouseEnter={() => setSelectedState(s)} className="group">
+                    <div
+                      key={s._id}
+                      onMouseEnter={() => setSelectedState(s)}
+                      className="group"
+                    >
                       <Link
                         href={stateHref(s)}
                         onClick={() => setActiveMenu(null)}
@@ -737,7 +745,11 @@ export default function NavbarUI({
         {/* ── WORLD ── */}
         <div
           className="relative"
-          onMouseEnter={() => { setActiveMenu("world"); setSelectedCountry(null); setSelectedState(null); }}
+          onMouseEnter={() => {
+            setActiveMenu("world");
+            setSelectedCountry(null);
+            setSelectedState(null);
+          }}
           onMouseLeave={() => setActiveMenu(null)}
         >
           <Link
@@ -751,12 +763,14 @@ export default function NavbarUI({
             <>
               <div className="absolute left-0 top-full h-3 w-full" />
               <div className="absolute left-0 top-full flex bg-white text-black shadow-2xl rounded-xl z-50 overflow-hidden">
-
                 <div className="w-[240px] bg-gray-50 border-r py-2">
                   {worldCountries.map((c: any) => (
                     <div
                       key={c._id}
-                      onMouseEnter={() => { setSelectedCountry(c); setSelectedState(null); }}
+                      onMouseEnter={() => {
+                        setSelectedCountry(c);
+                        setSelectedState(null);
+                      }}
                       className="group"
                     >
                       <Link
@@ -784,22 +798,28 @@ export default function NavbarUI({
                     >
                       All {selectedCountry.name} Tours →
                     </Link>
-                    {(statesByCountry[selectedCountry._id] || []).map((s: any) => (
-                      <div key={s._id} onMouseEnter={() => setSelectedState(s)} className="group">
-                        <Link
-                          href={stateHref(s)}
-                          onClick={() => setActiveMenu(null)}
-                          className="flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 transition-colors"
+                    {(statesByCountry[selectedCountry._id] || []).map(
+                      (s: any) => (
+                        <div
+                          key={s._id}
+                          onMouseEnter={() => setSelectedState(s)}
+                          className="group"
                         >
-                          <span className="text-sm text-gray-600 group-hover:text-gray-900">
-                            {s.name}
-                          </span>
-                          {(areasByState[s._id] || []).length > 0 && (
-                            <span className="text-gray-400 text-xs">›</span>
-                          )}
-                        </Link>
-                      </div>
-                    ))}
+                          <Link
+                            href={stateHref(s)}
+                            onClick={() => setActiveMenu(null)}
+                            className="flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 transition-colors"
+                          >
+                            <span className="text-sm text-gray-600 group-hover:text-gray-900">
+                              {s.name}
+                            </span>
+                            {(areasByState[s._id] || []).length > 0 && (
+                              <span className="text-gray-400 text-xs">›</span>
+                            )}
+                          </Link>
+                        </div>
+                      ),
+                    )}
                   </div>
                 )}
 
@@ -863,10 +883,16 @@ export default function NavbarUI({
           )}
         </div>
 
-        <Link href="/blog" className="hover:text-yellow-300 py-2 transition-colors">
+        <Link
+          href="/blog"
+          className="hover:text-yellow-300 py-2 transition-colors"
+        >
           Blog
         </Link>
-        <Link href="/contact" className="hover:text-yellow-300 py-2 transition-colors">
+        <Link
+          href="/contact"
+          className="hover:text-yellow-300 py-2 transition-colors"
+        >
           Contact Us
         </Link>
       </div>
@@ -874,23 +900,33 @@ export default function NavbarUI({
       {/* ═══════════════ MOBILE SIDEBAR ═══════════════ */}
       {open && (
         <>
-          <div className="fixed inset-0 bg-black/40 z-40" onClick={() => setOpen(false)} />
+          <div
+            className="fixed inset-0 bg-black/40 z-40"
+            onClick={() => setOpen(false)}
+          />
 
           <div className="fixed top-0 left-0 w-[85%] max-w-sm h-full bg-white text-black z-50 overflow-y-auto shadow-2xl">
-
             {/* Top bar */}
-            <div className="flex items-center justify-between p-4 border-b bg-gray-50">
-              <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-2 font-bold">
-                <div className="w-5 h-5 bg-yellow-400 rounded-sm" />
-                <span>Swasti Tours</span>
+            <div className="flex items-center justify-between px-4 py-3 border-b bg-white">
+              {/* Logo */}
+              <Link href="/" onClick={() => setOpen(false)}>
+                <Image
+                  src="/logo.png"
+                  alt="Swasti Tours"
+                  width={140}
+                  height={50}
+                  className="object-contain h-10 w-auto"
+                  priority
+                />
               </Link>
+
+              {/* Close Button */}
               <button onClick={() => setOpen(false)}>
-                <X size={22} className="text-gray-600" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="p-4 space-y-1 text-[15px]">
-
               {/* ── INDIA ── */}
               <div className="rounded-lg overflow-hidden border border-gray-100">
                 <div className="flex items-center justify-between">
@@ -912,7 +948,10 @@ export default function NavbarUI({
                 {openMenu["india"] && (
                   <div className="bg-gray-50 border-t">
                     {indiaStates.map((state: any) => (
-                      <div key={state._id} className="border-b border-gray-100 last:border-0">
+                      <div
+                        key={state._id}
+                        className="border-b border-gray-100 last:border-0"
+                      >
                         <div className="flex items-center justify-between">
                           <Link
                             href={stateHref(state)}
@@ -932,16 +971,18 @@ export default function NavbarUI({
                         </div>
                         {openMenu[state._id] && (
                           <div className="bg-white border-t border-gray-100">
-                            {(areasByState[state._id] || []).map((area: any) => (
-                              <Link
-                                key={area._id}
-                                href={areaHref(area, state)}
-                                onClick={() => setOpen(false)}
-                                className="block text-sm text-gray-500 py-2 px-7 hover:text-yellow-600 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0"
-                              >
-                                {area.name}
-                              </Link>
-                            ))}
+                            {(areasByState[state._id] || []).map(
+                              (area: any) => (
+                                <Link
+                                  key={area._id}
+                                  href={areaHref(area, state)}
+                                  onClick={() => setOpen(false)}
+                                  className="block text-sm text-gray-500 py-2 px-7 hover:text-yellow-600 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0"
+                                >
+                                  {area.name}
+                                </Link>
+                              ),
+                            )}
                           </div>
                         )}
                       </div>
@@ -971,7 +1012,10 @@ export default function NavbarUI({
                 {openMenu["world"] && (
                   <div className="bg-gray-50 border-t">
                     {worldCountries.map((country: any) => (
-                      <div key={country._id} className="border-b border-gray-100 last:border-0">
+                      <div
+                        key={country._id}
+                        className="border-b border-gray-100 last:border-0"
+                      >
                         <div className="flex items-center justify-between">
                           <Link
                             href={countryHref(country)}
@@ -992,41 +1036,46 @@ export default function NavbarUI({
 
                         {openMenu[country._id] && (
                           <div className="bg-white border-t border-gray-100">
-                            {(statesByCountry[country._id] || []).map((state: any) => (
-                              <div key={state._id}>
-                                <div className="flex items-center justify-between">
-                                  <Link
-                                    href={stateHref(state)}
-                                    onClick={() => setOpen(false)}
-                                    className="flex-1 text-sm text-gray-500 py-2 px-7 hover:text-yellow-600 hover:bg-gray-50 transition-colors"
-                                  >
-                                    {state.name}
-                                  </Link>
-                                  {(areasByState[state._id] || []).length > 0 && (
-                                    <button
-                                      onClick={() => toggle(state._id)}
-                                      className="px-4 py-2 text-gray-400 text-sm font-bold hover:bg-gray-100"
+                            {(statesByCountry[country._id] || []).map(
+                              (state: any) => (
+                                <div key={state._id}>
+                                  <div className="flex items-center justify-between">
+                                    <Link
+                                      href={stateHref(state)}
+                                      onClick={() => setOpen(false)}
+                                      className="flex-1 text-sm text-gray-500 py-2 px-7 hover:text-yellow-600 hover:bg-gray-50 transition-colors"
                                     >
-                                      {openMenu[state._id] ? "−" : "+"}
-                                    </button>
+                                      {state.name}
+                                    </Link>
+                                    {(areasByState[state._id] || []).length >
+                                      0 && (
+                                      <button
+                                        onClick={() => toggle(state._id)}
+                                        className="px-4 py-2 text-gray-400 text-sm font-bold hover:bg-gray-100"
+                                      >
+                                        {openMenu[state._id] ? "−" : "+"}
+                                      </button>
+                                    )}
+                                  </div>
+                                  {openMenu[state._id] && (
+                                    <div className="border-t border-gray-100">
+                                      {(areasByState[state._id] || []).map(
+                                        (area: any) => (
+                                          <Link
+                                            key={area._id}
+                                            href={areaHref(area, state)}
+                                            onClick={() => setOpen(false)}
+                                            className="block text-xs text-gray-400 py-2 px-10 hover:text-yellow-600 hover:bg-gray-50 transition-colors"
+                                          >
+                                            {area.name}
+                                          </Link>
+                                        ),
+                                      )}
+                                    </div>
                                   )}
                                 </div>
-                                {openMenu[state._id] && (
-                                  <div className="border-t border-gray-100">
-                                    {(areasByState[state._id] || []).map((area: any) => (
-                                      <Link
-                                        key={area._id}
-                                        href={areaHref(area, state)}
-                                        onClick={() => setOpen(false)}
-                                        className="block text-xs text-gray-400 py-2 px-10 hover:text-yellow-600 hover:bg-gray-50 transition-colors"
-                                      >
-                                        {area.name}
-                                      </Link>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
-                            ))}
+                              ),
+                            )}
                           </div>
                         )}
                       </div>
@@ -1057,7 +1106,9 @@ export default function NavbarUI({
                 {openMenu["special"] && (
                   <div className="bg-gray-50 border-t p-3 space-y-2">
                     {specialTours?.length === 0 && (
-                      <p className="text-xs text-gray-400 px-2">No specialty tours found</p>
+                      <p className="text-xs text-gray-400 px-2">
+                        No specialty tours found
+                      </p>
                     )}
                     {specialTours?.map((t: any) => (
                       // ✅ Each item is now a proper Link
@@ -1081,9 +1132,15 @@ export default function NavbarUI({
                           )}
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-gray-800 leading-tight">{t.title}</p>
-                          <p className="text-xs text-gray-400 mt-0.5">{t.count} Departures</p>
-                          <p className="text-xs text-blue-500 mt-0.5">View Tours →</p>
+                          <p className="text-sm font-medium text-gray-800 leading-tight">
+                            {t.title}
+                          </p>
+                          <p className="text-xs text-gray-400 mt-0.5">
+                            {t.count} Departures
+                          </p>
+                          <p className="text-xs text-blue-500 mt-0.5">
+                            View Tours →
+                          </p>
                         </div>
                       </Link>
                     ))}
@@ -1113,7 +1170,9 @@ export default function NavbarUI({
                 {openMenu["custom"] && (
                   <div className="bg-gray-50 border-t p-3 space-y-1">
                     {customCategories?.length === 0 && (
-                      <p className="text-xs text-gray-400 px-2">No categories found</p>
+                      <p className="text-xs text-gray-400 px-2">
+                        No categories found
+                      </p>
                     )}
                     {customCategories?.map((c: any) => (
                       // ✅ Each item is now a proper Link
@@ -1125,13 +1184,19 @@ export default function NavbarUI({
                       >
                         <div className="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-sm flex-shrink-0">
                           {c.icon ? (
-                            <img src={c.icon} alt={c.title} className="w-4 h-4 object-contain" />
+                            <img
+                              src={c.icon}
+                              alt={c.title}
+                              className="w-4 h-4 object-contain"
+                            />
                           ) : (
                             <span style={{ fontSize: "16px" }}>✈️</span>
                           )}
                         </div>
                         <div>
-                          <span className="text-sm text-gray-700 font-medium">{c.title}</span>
+                          <span className="text-sm text-gray-700 font-medium">
+                            {c.title}
+                          </span>
                           <p className="text-xs text-blue-500">View Tours →</p>
                         </div>
                       </Link>
@@ -1157,7 +1222,6 @@ export default function NavbarUI({
                   Contact Us
                 </Link>
               </div>
-
             </div>
           </div>
         </>
