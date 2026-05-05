@@ -355,3 +355,17 @@ export const tourBySlugQuery = `*[_type == "tour" && slug.current == $slug][0]{
     }
   }
 }`;
+
+// ================= TOURS BY CATEGORY =================
+export const TOURS_BY_CATEGORY = `
+  *[_type == "tour" && category match $category]{
+    _id,
+    title,
+    price,
+    days,
+    country,
+    state,
+    "slug": slug.current,
+    "image": mainImage.asset->url
+  }
+`;
