@@ -57,9 +57,9 @@ export const metadata: Metadata = {
 
   // ✅ FAVICON (IMPORTANT FIX)
   icons: {
-    icon: "/logo-2.png",        // ✅ browser tab favicon
-    shortcut: "/logo-2.png",    // ✅ optional but recommended
-    apple: "/logo-2.png",       // ✅ iPhone icon
+    icon: "/logo2.png",        // ✅ browser tab favicon
+    shortcut: "/logo2.png",    // ✅ optional but recommended
+    apple: "/logo2.png",       // ✅ iPhone icon
   },
 };
 
