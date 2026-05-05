@@ -11,48 +11,55 @@ const poppins = Poppins({
   variable: "--font-poppins",
 });
 
-// ✅ METADATA — WhatsApp, Google, Browser tab sab yahan se aata hai
+// ✅ METADATA (FULL FIXED)
 export const metadata: Metadata = {
-  title: "Swati Tours and Travels",
+  title: "Swasti Tours and Travels",
   description:
-    "Book your dream tour with Swati Tours and Travels. Best travel packages across India at affordable prices.",
-  keywords: ["tours", "travels", "travel packages", "India tours", "Swati Tours"],
-  authors: [{ name: "Swati Tours and Travels" }],
-  creator: "Swati Tours and Travels",
-  publisher: "Swati Tours and Travels",
+    "Book your dream tour with Swasti Tours and Travels. Best travel packages across India at affordable prices.",
+  keywords: [
+    "tours",
+    "travels",
+    "travel packages",
+    "India tours",
+    "Swasti Tours",
+  ],
+  authors: [{ name: "Swasti Tours and Travels" }],
+  creator: "Swasti Tours and Travels",
+  publisher: "Swasti Tours and Travels",
 
-  // ✅ Open Graph — WhatsApp / Facebook preview
+  // ✅ Open Graph (WhatsApp / Facebook)
   openGraph: {
-    title: "Swati Tours and Travels",
+    title: "Swasti Tours and Travels",
     description:
-      "Book your dream tour with Swati Tours and Travels. Best travel packages across India at affordable prices.",
-    url: "https://swifty-nu.vercel.app", // 🔁 Apna domain daalo
-    siteName: "Swati Tours and Travels",
+      "Book your dream tour with Swasti Tours and Travels. Best travel packages across India at affordable prices.",
+    url: "https://swifty-nu.vercel.app",
+    siteName: "Swasti Tours and Travels",
     locale: "en_IN",
     type: "website",
     images: [
       {
-        url: "/og-image.jpg", // 🔁 /public/og-image.jpg rakho (1200x630 px recommended)
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Swati Tours and Travels",
+        alt: "Swasti Tours and Travels",
       },
     ],
   },
 
-  // ✅ Twitter / X card
+  // ✅ Twitter Card
   twitter: {
     card: "summary_large_image",
-    title: "Swati Tours and Travels",
+    title: "Swasti Tours and Travels",
     description:
-      "Book your dream tour with Swati Tours and Travels. Best travel packages across India.",
+      "Book your dream tour with Swasti Tours and Travels. Best travel packages across India.",
     images: ["/og-image.jpg"],
   },
 
-  // ✅ Browser tab favicon
+  // ✅ FAVICON (IMPORTANT FIX)
   icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
+    icon: "/logo-2.png",        // ✅ browser tab favicon
+    shortcut: "/logo-2.png",    // ✅ optional but recommended
+    apple: "/logo-2.png",       // ✅ iPhone icon
   },
 };
 
