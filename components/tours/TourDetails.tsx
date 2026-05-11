@@ -217,7 +217,7 @@ export default function TourDetails({
                     <thead>
                       <tr className="border-b border-gray-100 bg-gray-50">
                         <th className="text-left px-5 py-3.5 font-semibold text-gray-500 text-xs uppercase tracking-wider">From → To</th>
-                        <th className="text-left px-5 py-3.5 font-semibold text-gray-500 text-xs uppercase tracking-wider">Airline / Flight</th>
+                        <th className="text-left px-5 py-3.5 font-semibold text-gray-500 text-xs uppercase tracking-wider">Train / Flight</th>
                         <th className="text-left px-5 py-3.5 font-semibold text-gray-500 text-xs uppercase tracking-wider">Departure</th>
                         <th className="text-left px-5 py-3.5 font-semibold text-gray-500 text-xs uppercase tracking-wider">Arrival</th>
                       </tr>
