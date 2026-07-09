@@ -260,8 +260,10 @@ export const TOURS_LISTING_QUERY = `*[
   "stateSlug":   state->slug.current,
   "country":     country->name,
   "countrySlug": country->slug.current,
-  "area":        area->name,
-  "areaSlug":    area->slug.current,
+  "areas": areas[]->{
+  name,
+  "slug": slug.current
+},
   "categories":           categories[]->{_id, "name": title},
   "customizedCategories": customizedCategories[]->{_id, "name": title}
 }`;
@@ -289,10 +291,10 @@ export const tourBySlugQuery = `*[_type == "tour" && slug.current == $slug][0]{
     "slug": slug.current
   },
 
-  "area": area->{
-    name,
-    "slug": slug.current
-  },
+  "areas": areas[]->{
+  name,
+  "slug": slug.current
+},
 
   "categories": categories[]->{
     title

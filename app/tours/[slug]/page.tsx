@@ -54,7 +54,7 @@ interface Tour {
   images?: string[];
   country?: { name?: string; slug?: string };
   state?: { name?: string; slug?: string };
-  area?: { name?: string; slug?: string };
+  areas?: { name?: string; slug?: string }[];
   categories?: { title?: string }[];
   customizedCategories?: { title?: string }[];
   flights?: any[];
@@ -191,9 +191,11 @@ export default async function TourPage({ params }: PageProps) {
   if (!tour) return <TourNotFound />;
 
   // Location string shown in header
-  const location = [tour.area?.name, tour.state?.name, tour.country?.name]
-    .filter(Boolean)
-    .join(" • ");
+  const areaNames = tour.areas?.map((item) => item.name).join(", ");
+
+const location = [areaNames, tour.state?.name, tour.country?.name]
+  .filter(Boolean)
+  .join(" • ");
 
   // Breadcrumb — country link uses ?country=<slug> to filter /tours listing
   const breadcrumbItems = [

@@ -41,11 +41,19 @@ export default defineType({
     }),
 
     defineField({
-      name: 'shortDescription',
-      title: 'Short Description',
-      type: 'string',
-      validation: (Rule) => Rule.max(200),
+  name: 'shortDescription',
+  title: 'Short Description',
+  type: 'text',
+  rows: 6,
+  validation: (Rule) =>
+    Rule.custom((value) => {
+      if (!value) return true;
+
+      const words = value.trim().split(/\s+/).length;
+
+      return words <= 200 || "Maximum 200 words allowed";
     }),
+}),
 
     defineField({
       name: 'rating',
@@ -86,24 +94,29 @@ export default defineType({
     }),
 
     defineField({
-      name: 'area',
-      title: 'Select Area',
-      type: 'reference',
-      to: [{type: 'area'}],
-      options: {
-        filter: ({document}) => {
-          const stateId = (document as any)?.state?._ref
+      name: 'areas',
+      title: 'Select Areas',
+      type: 'array',
+      of: [
+        {
+          type: 'reference',
+          to: [{type: 'area'}],
+          options: {
+            filter: ({document}) => {
+              const stateId = (document as any)?.state?._ref
 
-          if (!stateId) {
-            return {filter: 'false'}
-          }
+              if (!stateId) {
+                return {filter: 'false'}
+              }
 
-          return {
-            filter: 'state._ref == $stateId',
-            params: {stateId},
-          }
+              return {
+                filter: 'state._ref == $stateId',
+                params: {stateId},
+              }
+            },
+          },
         },
-      },
+      ],
       hidden: ({document}) => !(document as any)?.state,
     }),
 
@@ -347,8 +360,10 @@ export default defineType({
                   type: 'string',
                   options: {
                     list: [
+                      {title: 'Morning Tea', value: 'Morning Tea'},
                       {title: 'Breakfast', value: 'Breakfast'},
                       {title: 'Lunch', value: 'Lunch'},
+                      {title: 'Tea Snacks', value: 'Tea Snacks'},
                       {title: 'Dinner', value: 'Dinner'},
                       {title: 'Welcome Dinner', value: 'Welcome Dinner'},
                     ],

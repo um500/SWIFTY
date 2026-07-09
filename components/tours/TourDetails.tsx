@@ -10,7 +10,7 @@ import { useState } from "react";
 import { PortableText, PortableTextComponents } from "@portabletext/react";
 import type { PortableTextBlock } from "@portabletext/types";
 
-type TabKey = "flight" | "accommodation" | "reporting";
+type TabKey = "travel" | "accommodation" | "reporting";
 type RichValue = string | PortableTextBlock[] | null | undefined;
 
 interface FlightDetail {
@@ -43,7 +43,7 @@ interface TourDetailsProps {
 }
 
 const TABS: { key: TabKey; label: string; short: string }[] = [
-  { key: "flight",        label: "Flight Details",        short: "Flights"       },
+  { key: "travel",        label: "Travel  Details",        short: "Travel"       },
   { key: "accommodation", label: "Accommodation Details", short: "Hotels"        },
   { key: "reporting",     label: "Reporting & Dropping",  short: "Reporting"     },
 ];
@@ -161,10 +161,10 @@ export default function TourDetails({
         </div>
 
         {/* ── FLIGHT DETAILS ── */}
-        {activeTab === "flight" && (
+        {activeTab === "travel" && (
           <div className="min-h-[200px]">
             {flights.length === 0 ? (
-              <Empty message="Flight details not available yet." />
+              <Empty message="Travels details not available yet." />
             ) : (
               <>
                 {/* Mobile: cards */}
