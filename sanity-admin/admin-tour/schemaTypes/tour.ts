@@ -360,10 +360,10 @@ export default defineType({
                   type: 'string',
                   options: {
                     list: [
-                      {title: 'Morning Tea', value: 'Morning Tea'},
+                      {title: 'Bed Tea', value: 'Bed Tea'},
                       {title: 'Breakfast', value: 'Breakfast'},
                       {title: 'Lunch', value: 'Lunch'},
-                      {title: 'Tea Snacks', value: 'Tea Snacks'},
+                      {title: 'Evening Tea with Snacks', value: 'Evening Tea with Snacks'},
                       {title: 'Dinner', value: 'Dinner'},
                       {title: 'Welcome Dinner', value: 'Welcome Dinner'},
                     ],
